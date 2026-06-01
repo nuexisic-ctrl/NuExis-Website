@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NuExis Product Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- JSZip for ZIP generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FileSaver.js for saving files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>NuExis Builder</h2>
+            </div>
+            <nav>
+                <button id="nav-list" class="active" onclick="switchView('list')">
+                    <i data-lucide="list"></i> Products
+                </button>
+                <button id="nav-add" onclick="switchView('form')">
+                    <i data-lucide="plus-circle"></i> Add Product
+                </button>
+                <button id="nav-ai" onclick="openAIModal()" class="btn-magic">
+                    <i data-lucide="sparkles"></i> Magic Create
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-export" onclick="exportData()">
+                    <i data-lucide="download"></i> Export ZIP
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Product List View -->
+            <div id="view-list" class="view active">
+                <header class="view-header">
+                    <h1>Product Catalog</h1>
+                    <div class="actions">
+                        <input type="file" id="import-json" accept=".json" style="display: none;"
+                            onchange="importProducts(this)">
+                        <button class="btn-secondary" onclick="document.getElementById('import-json').click()">
+                            <i data-lucide="upload"></i> Import JSON
+                        </button>
+                        <button class="btn-secondary" onclick="openAIModal()">
+                            <i data-lucide="sparkles"></i> AI Create
+                        </button>
+                        <button class="btn-primary" onclick="switchView('form')">
+                            <i data-lucide="plus"></i> New Product
+                        </button>
+                    </div>
+                </header>
+
+                <div class="product-grid" id="product-grid">
+                    <!-- Products will be injected here -->
+                    <div class="empty-state">
+                        <i data-lucide="package-open" size="48"></i>
+                        <p>No products yet. Start by adding one!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Form View -->
+            <div id="view-form" class="view">
+                <header class="view-header">
+                    <h1 id="form-title">Add New Product</h1>
+                    <div class="actions">
+                        <button class="btn-secondary" onclick="switchView('list')">Cancel</button>
+                        <button class="btn-primary" onclick="saveProduct()">Save Product</button>
+                    </div>
+                </header>
+
+                <form id="product-form" onsubmit="event.preventDefault(); saveProduct();">
+                    <input type="hidden" id="edit-id">
+
+                    <div class="form-grid">
+                        <!-- Left Column: Basic Info -->
+                        <div class="form-section">
+                            <h3>Basic Information</h3>
+
+                            <div class="form-group">
+                                <label for="product-name">Product Name *</label>
+                                <input type="text" id="product-name" required oninput="generateSlug()">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="product-slug">Slug (URL ID) *</label>
+                                <input type="text" id="product-slug" required readonly class="bg-gray">
+                                <small>Auto-generated from name</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="product-series">Series *</label>
+                                <input type="text" id="product-series" required list="series-list"
+                                    placeholder="Select or type series">
+                                <datalist id="series-list">
+                                    <option value="Digital Signage Series">
+                                    <option value="Touch Display">
+                                    <option value="Digital Podium">
+                                    <option value="Digital Conference Series">
+                                    <option value="Pro Audio System">
+                                    <option value="Active LED">
+                                    <option value="Switching and Controls">
+                                    <option value="Accessories">
+                                    <option value="Conferencing System">
+                                </datalist>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="product-category">Category *</label>
+                                <input type="text" id="product-category" required
+                                    placeholder="e.g. Kiosk, Metal Podium">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="product-short-desc">Short Description</label>
+                                <textarea id="product-short-desc" rows="2"
+                                    placeholder="Brief summary for cards"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="product-desc">Full Description</label>
+                                <textarea id="product-desc" rows="5"
+                                    placeholder="Detailed product description"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Media & Files -->
+                        <div class="form-section">
+                            <h3>Media & Assets</h3>
+
+                            <div class="form-group">
+                                <label>Main Image *</label>
+                                <div class="file-upload-zone" id="main-image-zone"
+                                    onclick="document.getElementById('main-image-input').click()">
+                                    <div id="main-image-preview" class="preview-container">
+                                        <i data-lucide="image"></i>
+                                        <span>Click to upload</span>
+                                    </div>
+                                    <input type="file" id="main-image-input" accept="image/*" style="display: none;"
+                                        onchange="handleImageUpload(this, 'main')">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Gallery Images</label>
+                                <div class="file-upload-zone"
+                                    onclick="document.getElementById('gallery-input').click()">
+                                    <div id="gallery-preview" class="gallery-grid">
+                                        <div class="add-more">
+                                            <i data-lucide="plus"></i>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="gallery-input" accept="image/*" multiple
+                                        style="display: none;" onchange="handleGalleryUpload(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Catalog PDF</label>
+                                <div class="file-row">
+                                    <input type="file" id="pdf-input" accept=".pdf">
+                                    <span id="pdf-status" class="status-text">No file selected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full Width: Features & Specs -->
+                    <div class="form-grid">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <h3>Key Features</h3>
+                                <button type="button" class="btn-small" onclick="addFeatureField()">+ Add
+                                    Feature</button>
+                            </div>
+                            <div id="features-list" class="dynamic-list">
+                                <!-- Feature inputs go here -->
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <h3>Specifications</h3>
+                                <button type="button" class="btn-small" onclick="addSpecField()">+ Add Spec</button>
+                            </div>
+                            <div id="specs-list" class="dynamic-list">
+                                <!-- Spec key-value pairs go here -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Modal -->
+    <div id="ai-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i data-lucide="sparkles"></i> Magic Create</h2>
+                <button onclick="closeAIModal()" class="btn-icon"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Enter the product name and a brief description. AI will generate the rest!</p>
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="ai-product-name" placeholder="e.g. Smart Digital Kiosk K500">
+                </div>
+                <div class="form-group">
+                    <label>Brief Info / Keywords</label>
+                    <textarea id="ai-product-info" rows="3"
+                        placeholder="e.g. 55 inch, touch screen, for malls, 4k resolution, android 11"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="generateProductWithAI()" id="btn-ai-generate" class="btn-magic block-btn">
+                    <span>Generate Product</span>
+                    <i data-lucide="wand-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

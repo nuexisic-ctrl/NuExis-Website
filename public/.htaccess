@@ -1,0 +1,14 @@
+Options -MultiViews
+RewriteEngine On
+
+# Handle React Router (SPA fallback) — redirect all non-file/non-dir requests to index.html
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# Content Security Policy — allows Supabase HTTPS + WebSocket (wss://)
+<IfModule mod_headers.c>
+  Header set Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://aistudiocdn.com https://cdn.tailwindcss.com; img-src 'self' data: https: blob:; font-src 'self' https: data:;"
+</IfModule>

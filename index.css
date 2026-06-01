@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --color-brand-black: #ffffff;
+  --color-brand-dark: #f9fafb;
+  --color-brand-blue: #3b82f6;
+  --color-brand-accent: #06b6d4;
+  --color-brand-text: #0a0a0a;
+  --color-brand-textSecondary: #4b5563;
+  --animate-spin-slow: spin 3s linear infinite;
+}
+
+/* NuExis Custom Styles */
+
+/* Ensure smooth scrolling is applied */
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
+}
+
+/* Selection styling */
+::selection {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
