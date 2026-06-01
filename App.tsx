@@ -16,7 +16,6 @@ const About = lazy(() => import('./components/About'));
 const WhyChooseUs = lazy(() => import('./components/WhyChooseUs'));
 const MissionValues = lazy(() => import('./components/MissionValues'));
 const Testimonials = lazy(() => import('./components/Testimonials'));
-const Resources = lazy(() => import('./components/Resources'));
 
 const FAQ = lazy(() => import('./components/FAQ'));
 const Footer = lazy(() => import('./components/Footer'));
@@ -60,7 +59,6 @@ const HomePage: React.FC = () => (
       <WhyChooseUs />
       <MissionValues />
       <Testimonials />
-      <Resources />
 
       <FAQ />
     </Suspense>

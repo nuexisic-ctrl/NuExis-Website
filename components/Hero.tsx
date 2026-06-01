@@ -142,8 +142,6 @@ const Hero: React.FC = () => {
     paginate(1);
   };
 
-  const nextSlide = slides[(currentIndex + 1) % slides.length];
-
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-24 pb-12 overflow-hidden">
       {/* Background Gradient Blurs */}

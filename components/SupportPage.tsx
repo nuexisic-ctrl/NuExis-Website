@@ -34,7 +34,7 @@ const SupportPage: React.FC = () => {
             icon: <Headphones className="w-6 h-6" />,
             title: "Technical Support",
             description: "Get help with installation, troubleshooting, and maintenance.",
-            availability: "24/7 Available",
+            availability: "Mon to Sun 9 to 6 pm",
             email: "support@nuexis.com",
             phone: "9992199229"
         },
@@ -159,7 +159,7 @@ const SupportPage: React.FC = () => {
                                         value={formData.phone}
                                         onChange={handleChange}
                                         className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 outline-none transition-all"
-                                        placeholder="8468888310"
+                                        placeholder="9992199229"
                                     />
                                 </div>
                                 <div>
@@ -241,7 +241,7 @@ const SupportPage: React.FC = () => {
                                     <div>
                                         <h4 className="font-semibold mb-1">Phone</h4>
                                         <p className="text-sm opacity-90">
-                                            8468888310
+                                            9992199229
                                         </p>
                                     </div>
                                 </div>
@@ -265,9 +265,7 @@ const SupportPage: React.FC = () => {
                                     <div>
                                         <h4 className="font-semibold mb-1">Business Hours</h4>
                                         <p className="text-sm opacity-90">
-                                            Monday - Friday: 9:00 AM - 6:00 PM<br />
-                                            Saturday: 10:00 AM - 2:00 PM<br />
-                                            Sunday: Closed
+                                            Mon to Sun: 9:00 AM - 6:00 PM
                                         </p>
                                     </div>
                                 </div>

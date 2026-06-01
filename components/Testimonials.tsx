@@ -5,24 +5,24 @@ import { motion } from 'framer-motion';
 const testimonials = [
   {
     id: 1,
-    quote: "NuExis has completely transformed how we handle real-time data. The latency is practically non-existent, and the uptime is flawless.",
-    author: "Alex Morgan",
-    role: "CTO, TechFlow",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop"
+    quote: "NuExis delivered an outstanding active LED video wall for our control room. Their attention to detail, from pixel pitch selection to final installation, proved they truly understand mission-critical AV infrastructure.",
+    author: "Rohan Desai",
+    role: "Chief Technology Officer, Nexus Systems",
+    image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=400&q=80"
   },
   {
     id: 2,
-    quote: "The security features alone are worth the investment. We've never felt safer scaling our infrastructure to millions of global users.",
-    author: "Sarah Chen",
-    role: "VP Engineering, DataCore",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop"
+    quote: "The digital podiums and interactive flat panels from NuExis have modernized our university's lecture halls. The build quality is exceptional, and the integration with our existing AV setup was seamless.",
+    author: "Priya Patel",
+    role: "Dean of Technology, Amrita University",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"
   },
   {
     id: 3,
-    quote: "A visually stunning and incredibly performant platform. It’s rare to see this level of polish and developer experience in infrastructure tools.",
-    author: "Marcus Johnson",
-    role: "Lead Architect, Skyline",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1976&auto=format&fit=crop"
+    quote: "Upgrading our corporate boardrooms with NuExis conference systems was the best decision. The audio clarity is phenomenal, eliminating all background noise during crucial international client calls.",
+    author: "Vikram Malhotra",
+    role: "Head of IT Infrastructure, Global Edge Solutions",
+    image: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400&q=80"
   }
 ];
 
