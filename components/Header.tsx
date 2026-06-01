@@ -180,8 +180,8 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center space-x-1">
             {(!catalogLoading ? navLinks : navLinks).map((link) => (
-              <div key={link.label} className="group pb-6 -mb-6">
-                <div className="px-1 py-2">
+              <div key={link.label} className="group">
+                <div className="px-1 py-2 relative after:content-[''] after:absolute after:left-0 after:w-full after:h-8 after:top-full">
                   {isRoute(link.href) ? (
                     <Link
                       to={link.href}
@@ -217,11 +217,9 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
 
                 {/* Legacy Mega Menu Dropdown */}
                 {link.megaMenu && (
-                  <div className="absolute top-full left-0 w-full pt-4 opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible transition-[opacity,transform,visibility] duration-300 transform translate-y-4 group-hover:translate-y-0 z-50 flex flex-col items-center">
-                    {/* Invisible hover bridge */}
-                    <div className="w-[96%] max-w-[1000px] h-6 bg-transparent pointer-events-auto" />
+                  <div className="absolute top-full left-0 w-full pt-1 opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible transition-[opacity,transform,visibility] duration-200 transform translate-y-1 group-hover:translate-y-0 z-50 flex flex-col items-center">
                     
-                    <div className="bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl overflow-hidden p-6 w-[96%] max-w-[1000px] pointer-events-auto text-left">
+                    <div className="bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl overflow-hidden p-6 w-[96%] max-w-[1000px] pointer-events-auto text-left relative">
                       <div className="flex gap-8">
                         {/* Grid Section */}
                         <div
