@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Package, Shield, Menu, X, ChevronRight, Layers, Image as ImageIcon, Inbox, Bell } from 'lucide-react';
+import { Package, Shield, Menu, X, ChevronRight, Layers, Image as ImageIcon, Inbox, Bell, Download, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
+import { exportAppData } from '../lib/exportHelper';
 import toast from 'react-hot-toast';
 import AdminProductsPanel from './AdminProductsPanel';
 import AdminSoftwarePanel from './AdminSoftwarePanel';
@@ -37,6 +38,19 @@ const AdminPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('products');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadRequests, setUnreadRequests] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
+  
+  const handleDownloadData = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    let toastId = toast.loading('Starting export...');
+    try {
+      await exportAppData((msg) => toast.loading(msg, { id: toastId }));
+    } finally {
+      setIsExporting(false);
+      toast.dismiss(toastId);
+    }
+  };
 
   useEffect(() => {
     // Top-level realtime listener for incoming catalog requests
@@ -113,8 +127,16 @@ const AdminPage: React.FC = () => {
         </nav>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-black/5">
-          <p className="text-xs text-gray-400">NuExis Admin v1.0</p>
+        <div className="px-5 py-4 border-t border-black/5 space-y-3">
+          <button 
+             onClick={handleDownloadData}
+             disabled={isExporting}
+             className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+          >
+             {isExporting ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <Download className="w-4 h-4 shrink-0" />}
+             {isExporting ? 'Exporting...' : 'Download App Data'}
+          </button>
+          <p className="text-xs text-gray-400 text-center">NuExis Admin v1.0</p>
         </div>
       </aside>
 
@@ -174,6 +196,17 @@ const AdminPage: React.FC = () => {
                   </button>
                 ))}
               </nav>
+
+              <div className="px-5 py-4 border-t border-black/5">
+                <button 
+                   onClick={handleDownloadData}
+                   disabled={isExporting}
+                   className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+                >
+                   {isExporting ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <Download className="w-4 h-4 shrink-0" />}
+                   {isExporting ? 'Exporting...' : 'Download App Data'}
+                </button>
+              </div>
             </motion.aside>
           </>
         )}

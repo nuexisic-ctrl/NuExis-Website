@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { HeroSlide } from '../types';
-import { ChevronRight, PlayCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
 
@@ -234,14 +234,24 @@ const Hero: React.FC = () => {
               {/* Overlay Gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none z-10" />
 
-              {/* Glass info card inside image - Shows next slide title */}
-              <div className="hidden sm:block absolute bottom-6 left-6 right-6 p-4 sm:p-6 rounded-2xl bg-white/90 backdrop-blur-md border border-white/20 transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none z-20">
-                <div className="flex items-center justify-between text-gray-900">
-                  <span className="text-sm font-semibold">{nextSlide.title}</span>
-                  <ChevronRight className="w-5 h-5 text-gray-700" />
-                </div>
-              </div>
             </motion.div>
+
+            {/* Carousel Navigation Arrows */}
+            <button
+              onClick={(e) => { e.stopPropagation(); paginate(-1); }}
+              aria-label="Previous slide"
+              className="absolute top-1/2 -translate-y-1/2 left-4 sm:left-6 z-30 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-white/50 text-gray-800 shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-white hover:scale-105 hover:shadow-[0_8px_16px_rgba(0,0,0,0.12)] opacity-0 invisible group-hover:opacity-100 group-hover:visible focus:outline-none"
+            >
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
+            </button>
+            
+            <button
+              onClick={(e) => { e.stopPropagation(); paginate(1); }}
+              aria-label="Next slide"
+              className="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 z-30 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md border border-white/50 text-gray-800 shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-white hover:scale-105 hover:shadow-[0_8px_16px_rgba(0,0,0,0.12)] opacity-0 invisible group-hover:opacity-100 group-hover:visible focus:outline-none"
+            >
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
+            </button>
 
           </div>
 

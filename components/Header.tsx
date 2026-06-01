@@ -174,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
         <div className="flex items-center justify-between px-6 py-2 lg:py-2.5">
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer group z-50">
-            <Logo className="h-6 w-auto" />
+            <Logo className="h-8 w-auto" />
           </Link>
 
           {/* Desktop Nav */}
