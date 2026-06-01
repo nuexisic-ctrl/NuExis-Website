@@ -171,10 +171,10 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
       }`}
     >
       <div className="max-w-7xl mx-auto w-full">
-        <div className="flex items-center justify-between px-6 py-3 lg:py-4">
+        <div className="flex items-center justify-between px-6 py-2 lg:py-2.5">
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer group z-50">
-            <Logo className="h-8 w-auto" />
+            <Logo className="h-6 w-auto" />
           </Link>
 
           {/* Desktop Nav */}
@@ -185,7 +185,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                   {isRoute(link.href) ? (
                     <Link
                       to={link.href}
-                      className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md ${
+                      className={`flex items-center px-3 py-1.5 text-sm font-medium transition-colors duration-200 rounded-md ${
                         location.pathname === link.href
                           ? 'text-brand-blue bg-brand-blue/5'
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -199,7 +199,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                   ) : (
                     <a
                       href={link.href}
-                      className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md ${
+                      className={`flex items-center px-3 py-1.5 text-sm font-medium transition-colors duration-200 rounded-md ${
                         location.pathname === link.href
                           ? 'text-brand-blue bg-brand-blue/5'
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -217,11 +217,11 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
 
                 {/* Legacy Mega Menu Dropdown */}
                 {link.megaMenu && (
-                  <div className="absolute top-full left-0 w-full pt-6 opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto transition-[opacity,transform,visibility] duration-300 transform translate-y-4 group-hover:translate-y-0 z-50">
+                  <div className="absolute top-full left-0 w-full pt-4 opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible transition-[opacity,transform,visibility] duration-300 transform translate-y-4 group-hover:translate-y-0 z-50 flex flex-col items-center">
                     {/* Invisible hover bridge */}
-                    <div className="absolute -top-8 left-0 w-full h-12 bg-transparent" />
+                    <div className="w-[96%] max-w-[1000px] h-6 bg-transparent pointer-events-auto" />
                     
-                    <div className="bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl overflow-hidden p-6 mx-auto w-[96%] max-w-[1000px]">
+                    <div className="bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl overflow-hidden p-6 w-[96%] max-w-[1000px] pointer-events-auto text-left">
                       <div className="flex gap-8">
                         {/* Grid Section */}
                         <div
@@ -318,7 +318,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
               <div className="px-1 py-2">
                 <Link
                   to="/admin"
-                  className={`flex items-center gap-1.5 px-4 py-2 text-base font-semibold transition-colors rounded-full ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold transition-colors rounded-full ${
                     location.pathname === '/admin'
                       ? 'text-brand-blue bg-brand-blue/5'
                       : 'text-brand-blue hover:bg-brand-blue/5'
@@ -376,7 +376,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
               <>
                 <button
                   onClick={onLoginClick}
-                  className="px-5 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-black rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+                  className="px-4 py-1.5 text-sm font-medium text-white bg-gray-900 hover:bg-black rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
                 >
                   Log In <LogIn className="w-4 h-4 ml-0.5" />
                 </button>
