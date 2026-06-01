@@ -164,12 +164,14 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
 
   return (
     <header
-      className={`fixed left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-6xl transition-all duration-500 ${isScrolled ? 'top-4' : 'top-6'}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ${
+        isScrolled 
+          ? 'bg-white/80 backdrop-blur-lg shadow-sm border-b border-black/5' 
+          : 'bg-white border-b border-transparent'
+      }`}
     >
-      <div
-        className="relative backdrop-blur-xl bg-white/40 bg-gradient-to-r from-white/60 via-blue-50/40 to-white/60 border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.06),_0_0_20px_rgba(59,130,246,0.1)] rounded-full transition-all duration-500"
-      >
-        <div className="flex items-center justify-between px-6 py-2">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-between px-6 py-3 lg:py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer group z-50">
             <Logo className="h-8 w-auto" />
@@ -183,27 +185,29 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                   {isRoute(link.href) ? (
                     <Link
                       to={link.href}
-                      className={`flex items-center px-5 py-2 text-sm font-semibold transition-all duration-300 rounded-full ${location.pathname === link.href
-                        ? 'text-blue-800 bg-white/60 shadow-[0_0_20px_rgba(59,130,246,0.2)] border border-white/50'
-                        : 'text-gray-700 hover:text-blue-700 hover:bg-white/40 hover:shadow-[0_0_15px_rgba(59,130,246,0.15)] border border-transparent'
-                        }`}
+                      className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md ${
+                        location.pathname === link.href
+                          ? 'text-brand-blue bg-brand-blue/5'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
                     >
                       {link.label}
                       {link.megaMenu && (
-                        <ChevronDown className="w-4 h-4 ml-1.5 transform group-hover:rotate-180 transition-transform duration-300" />
+                        <ChevronDown className="w-4 h-4 ml-1.5 opacity-70 transform group-hover:rotate-180 transition-transform duration-300" />
                       )}
                     </Link>
                   ) : (
                     <a
                       href={link.href}
-                      className={`flex items-center px-5 py-2 text-sm font-semibold transition-all duration-300 rounded-full ${location.pathname === link.href
-                        ? 'text-blue-800 bg-white/60 shadow-[0_0_20px_rgba(59,130,246,0.2)] border border-white/50'
-                        : 'text-gray-700 hover:text-blue-700 hover:bg-white/40 hover:shadow-[0_0_15px_rgba(59,130,246,0.15)] border border-transparent'
-                        } cursor-pointer`}
+                      className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-md ${
+                        location.pathname === link.href
+                          ? 'text-brand-blue bg-brand-blue/5'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      } cursor-pointer`}
                     >
                       {link.label}
                       {link.megaMenu && (
-                        <ChevronDown className="w-4 h-4 ml-1.5 transform group-hover:rotate-180 transition-transform duration-300" />
+                        <ChevronDown className="w-4 h-4 ml-1.5 opacity-70 transform group-hover:rotate-180 transition-transform duration-300" />
                       )}
                     </a>
                   )}
@@ -372,7 +376,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
               <>
                 <button
                   onClick={onLoginClick}
-                  className="px-5 py-2 text-sm font-medium text-gray-800 bg-white/50 hover:bg-white/80 border border-white/60 shadow-sm rounded-full transition-all flex items-center gap-1.5"
+                  className="px-5 py-2 text-sm font-medium text-white bg-gray-900 hover:bg-black rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
                 >
                   Log In <LogIn className="w-4 h-4 ml-0.5" />
                 </button>
