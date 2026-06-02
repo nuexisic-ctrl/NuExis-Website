@@ -25,6 +25,7 @@ const NotFoundPage = lazy(() => import('./components/NotFoundPage'));
 const SupportPage = lazy(() => import('./components/SupportPage'));
 const GalleryPage = lazy(() => import('./components/GalleryPage'));
 const AdminPage = lazy(() => import('./components/AdminPage'));
+const SitemapPage = lazy(() => import('./components/SitemapPage'));
 
 // Dynamic Catalog Pages
 const CategoryListPage = lazy(() => import('./components/CategoryListPage'));
@@ -109,6 +110,7 @@ const AppContent: React.FC = () => {
             {/* ── Other pages ── */}
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/support" element={<SupportPage />} />
+            <Route path="/sitemap" element={<SitemapPage />} />
 
             {/* ── Admin (protected) ── */}
             <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />

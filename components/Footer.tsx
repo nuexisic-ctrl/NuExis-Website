@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, MapPin, Phone, Twitter, Instagram, Linkedin } from 'lucide-react';
 import Logo from './Logo';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -33,11 +34,18 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-bold text-gray-900 mb-4">Company</h4>
             <ul className="space-y-2">
-              {['About Us', 'Careers', 'Blog', 'Legal'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">{item}</a>
-                </li>
-              ))}
+              <li>
+                <a href="/#about" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">About Us</a>
+              </li>
+              <li>
+                <Link to="/sitemap" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Sitemap</Link>
+              </li>
+              <li>
+                <a href="#" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Careers</a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Legal</a>
+              </li>
             </ul>
           </div>
 
@@ -62,9 +70,13 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-black/10 pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-gray-500 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} NuExis Inc. All rights reserved.
-          </p>
+          <div className="flex items-center space-x-3 mb-4 md:mb-0">
+            <p className="text-gray-500 text-sm">
+              © {new Date().getFullYear()} NuExis Inc. All rights reserved.
+            </p>
+            <span className="text-gray-300">|</span>
+            <Link to="/sitemap" className="text-gray-500 hover:text-brand-blue transition-colors text-sm">Sitemap</Link>
+          </div>
           <div className="flex space-x-6">
             <a href="#" className="text-gray-400 hover:text-gray-900 transition-colors" aria-label="Twitter"><Twitter className="w-5 h-5" /></a>
             <a href="https://www.instagram.com/nuexis.inc/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-900 transition-colors" aria-label="Instagram"><Instagram className="w-5 h-5" /></a>
