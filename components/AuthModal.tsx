@@ -97,7 +97,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultTab = 'lo
             className="fixed inset-0 z-[101] flex items-center justify-center p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-black/10 overflow-hidden">
+            <div className="relative w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-black/10 overflow-hidden theme-forced-light">
 
               {/* Gradient accent top bar */}
               <div className="h-1 w-full bg-gradient-to-r from-brand-blue via-blue-400 to-blue-600" />

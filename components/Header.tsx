@@ -355,9 +355,9 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.96 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-xl overflow-hidden py-2 z-50"
+                      className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-xl z-50"
                     >
-                      <div className="px-4 py-2 border-b border-black/5">
+                      <div className="px-4 pt-3 pb-2 border-b border-black/5 rounded-t-2xl">
                         <p className="text-sm font-semibold text-gray-900 truncate">{profile?.full_name || 'User'}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                       </div>
@@ -399,7 +399,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
 
                       <button
                         onClick={() => { signOut(); setUserMenuOpen(false); }}
-                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-2xl transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out

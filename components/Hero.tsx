@@ -109,7 +109,7 @@ const Hero: React.FC = () => {
                   <button className="h-[52px] px-8 rounded-xl bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-semibold text-[15px] transition-all duration-300 shadow-[0_8px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_10px_25px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 w-full sm:w-auto">
                     View Solutions
                   </button>
-                  <button className="h-[52px] px-6 rounded-xl bg-transparent hover:bg-black/5 text-slate-800 font-semibold text-[15px] transition-all duration-300 inline-flex items-center justify-center gap-2.5 w-full sm:w-auto">
+                  <button className="h-[52px] px-6 rounded-xl bg-transparent hover:bg-black/5 text-gray-800 font-semibold text-[15px] transition-all duration-300 inline-flex items-center justify-center gap-2.5 w-full sm:w-auto">
                     <PlayCircle className="w-[22px] h-[22px] text-blue-600 stroke-[2.5]" />
                     <span>Watch Demo</span>
                   </button>

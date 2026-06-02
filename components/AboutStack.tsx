@@ -15,10 +15,10 @@ const AboutStack: React.FC = () => {
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 mb-32">
           {/* Left Text */}
           <div className="w-full lg:w-1/2">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Our Mission
             </h2>
-            <div className="space-y-6 text-slate-600 leading-relaxed text-lg">
+            <div className="space-y-6 text-gray-600 leading-relaxed text-lg">
               <p>
                 At NuExis, we believe that exceptional audio visual technology is the
                 foundation of modern communication. Our mission is to deliver innovative
@@ -43,9 +43,9 @@ const AboutStack: React.FC = () => {
               />
             </div>
             {/* Floating Card */}
-            <div className="absolute -bottom-6 right-8 bg-white p-5 rounded-[24px] shadow-2xl border border-slate-100 z-20 min-w-[200px]">
-              <h4 className="font-bold text-slate-900 text-xl mb-1">NuExis</h4>
-              <p className="text-slate-500 text-sm">AV Excellence</p>
+            <div className="absolute -bottom-6 right-8 bg-white p-5 rounded-[24px] shadow-2xl border border-gray-100 z-20 min-w-[200px]">
+              <h4 className="font-bold text-gray-900 text-xl mb-1">NuExis</h4>
+              <p className="text-gray-500 text-sm">AV Excellence</p>
             </div>
           </div>
         </div>
@@ -70,10 +70,10 @@ const AboutStack: React.FC = () => {
           
           {/* Right Text */}
           <div className="w-full lg:w-1/2">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Our Story
             </h2>
-            <div className="space-y-6 text-slate-600 leading-relaxed text-lg">
+            <div className="space-y-6 text-gray-600 leading-relaxed text-lg">
               <p>
                 Founded by AV industry veterans in 2000, NuExis emerged from a simple
                 observation: businesses needed audio visual solutions that were both
