@@ -160,6 +160,14 @@
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
+.dark .carousel-dot:not(.bg-brand-blue) {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.dark .carousel-dot:not(.bg-brand-blue):hover {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+
 body {
   background-color: var(--gray-50-custom);
   color: var(--gray-900-custom);

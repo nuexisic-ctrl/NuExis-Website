@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Phone, Twitter, Github, Linkedin } from 'lucide-react';
+import { Mail, MapPin, Phone, Twitter, Instagram, Linkedin } from 'lucide-react';
 import Logo from './Logo';
 
 const Footer: React.FC = () => {
@@ -66,9 +66,9 @@ const Footer: React.FC = () => {
             © {new Date().getFullYear()} NuExis Inc. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-black transition-colors" aria-label="Twitter"><Twitter className="w-5 h-5" /></a>
-            <a href="#" className="text-gray-400 hover:text-black transition-colors" aria-label="Github"><Github className="w-5 h-5" /></a>
-            <a href="#" className="text-gray-400 hover:text-black transition-colors" aria-label="LinkedIn"><Linkedin className="w-5 h-5" /></a>
+            <a href="#" className="text-gray-400 hover:text-gray-900 transition-colors" aria-label="Twitter"><Twitter className="w-5 h-5" /></a>
+            <a href="https://www.instagram.com/nuexis.inc/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-900 transition-colors" aria-label="Instagram"><Instagram className="w-5 h-5" /></a>
+            <a href="#" className="text-gray-400 hover:text-gray-900 transition-colors" aria-label="LinkedIn"><Linkedin className="w-5 h-5" /></a>
           </div>
         </div>
       </div>

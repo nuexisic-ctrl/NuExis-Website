@@ -197,8 +197,7 @@ const Hero: React.FC = () => {
                   const diff = idx - currentIndex;
                   if (diff !== 0) paginate(diff);
                 }}
-                className={`h-1.5 rounded-full transition-all duration-500 ${currentIndex === idx ? 'w-8 bg-brand-blue' : 'w-2 bg-black/20 hover:bg-black/40'
-                  }`}
+                className={`carousel-dot h-1.5 rounded-full transition-all duration-500 ${currentIndex === idx ? 'w-8 bg-brand-blue' : 'w-2 bg-black/20 hover:bg-black/40'}`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
             ))}
