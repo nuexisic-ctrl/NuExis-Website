@@ -732,13 +732,6 @@ export const staticGalleryItems = [
     "name": "32\" TOUCH KIOSK AT BEL, WTC DELHI",
     "image_url": "/images/gallery/TOUCH KIOSK/32\" TOUCH KIOSK AT BEL, WTC DELHI.webp",
     "created_at": "2026-04-15T16:22:53.477913+00:00"
-  },
-  {
-    "id": "e98f7bb8-15db-4c3c-b689-0fbbe5f0147a",
-    "category_id": "fecc6604-8b05-406a-89db-558aa0e69745",
-    "name": "16 KIOSK INSTALLED AT BEL, DELHI",
-    "image_url": "/images/gallery/TOUCH KIOSK/16 KIOSK INSTALLED AT BEL, DELHI.webp",
-    "created_at": "2026-04-15T16:23:43.878439+00:00"
   }
 ];
 

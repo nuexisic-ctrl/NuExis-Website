@@ -373,10 +373,13 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                         </div>
                         
                         {/* Submenu */}
-                        <div className="absolute right-full top-0 mr-1 w-36 bg-white/95 backdrop-blur-xl border border-black/10 rounded-xl shadow-lg overflow-hidden py-1 opacity-0 pointer-events-none group-hover/theme-item:opacity-100 group-hover/theme-item:pointer-events-auto transition-[opacity,transform] duration-200 transform translate-x-1 group-hover/theme-item:translate-x-0">
+                        <div className="absolute right-full top-0 mr-1 w-36 bg-white/95 backdrop-blur-xl border border-black/10 rounded-xl shadow-lg py-1 opacity-0 pointer-events-none group-hover/theme-item:opacity-100 group-hover/theme-item:pointer-events-auto transition-[opacity,transform] duration-200 transform translate-x-1 group-hover/theme-item:translate-x-0">
+                          {/* Invisible bridge to prevent hover gap closure */}
+                          <div className="absolute top-0 -right-3 w-3 h-full bg-transparent" />
+                          
                           <button
                             onClick={() => { setTheme('light'); setUserMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 transition-colors flex items-center justify-between"
+                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 rounded-t-xl transition-colors flex items-center justify-between"
                           >
                             <span className="flex items-center gap-1.5">
                               <Sun className="w-3.5 h-3.5 text-gray-400" />
@@ -386,7 +389,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                           </button>
                           <button
                             onClick={() => { setTheme('dark'); setUserMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 transition-colors flex items-center justify-between"
+                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 rounded-b-xl transition-colors flex items-center justify-between"
                           >
                             <span className="flex items-center gap-1.5">
                               <Moon className="w-3.5 h-3.5 text-gray-400" />
