@@ -66,6 +66,7 @@
 
   /* Bind standard colors to custom variables that swap when .dark class is active */
   --color-white: var(--white-custom);
+  --color-static-white: #ffffff;
   --color-gray-50: var(--gray-50-custom);
   --color-gray-100: var(--gray-100-custom);
   --color-gray-200: var(--gray-200-custom);
@@ -111,6 +112,34 @@
   color: #ffffff;
 }
 
+/* Ensure that white components (text-white, bg-white/x, etc.) remain white on dark/colored background sections */
+.bg-brand-blue,
+.bg-brand-accent,
+.bg-blue-600,
+.bg-blue-700,
+.bg-green-500,
+.bg-green-600,
+.bg-red-500,
+.bg-black\/30,
+.bg-black\/40,
+.bg-black\/50,
+.bg-black\/60,
+.bg-black\/70,
+.bg-black\/80,
+.bg-black\/90,
+.bg-black\/95,
+.bg-gradient-to-br,
+.bg-gradient-to-r,
+.bg-gradient-to-t,
+.bg-gradient-to-tr,
+.hover\:bg-brand-blue:hover,
+.hover\:bg-blue-600:hover,
+.hover\:bg-blue-700:hover,
+.hover\:bg-green-600:hover,
+.group:hover .group-hover\:bg-brand-blue {
+  --white-custom: #ffffff !important;
+}
+
 /* Dark mode explicit overrides for transparent borders/backgrounds that are hardcoded in components */
 .dark .border-black\/5 {
   border-color: rgba(255, 255, 255, 0.05) !important;
@@ -128,12 +157,32 @@
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
+.dark .bg-black\/20 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
 .dark .hover\:bg-black\/5:hover {
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 .dark .group:hover .group-hover\:bg-black\/5 {
   background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .hover\:bg-black\/10:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .group:hover .group-hover\:bg-black\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .hover\:bg-black\/20:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .group:hover .group-hover\:bg-black\/20 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .theme-forced-light .border-black\/5 {

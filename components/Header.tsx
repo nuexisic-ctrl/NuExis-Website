@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown, ChevronRight, FileText, HelpCircle, MessageSquare, LogOut, LogIn, UserPlus, Shield, Layers, SunMoon, Sun, Moon, Check } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, ChevronLeft, FileText, HelpCircle, MessageSquare, LogOut, LogIn, UserPlus, Shield, Layers, SunMoon, Sun, Moon, Check, User } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
@@ -166,14 +166,14 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/80 backdrop-blur-lg shadow-sm border-b border-black/5' 
-          : 'bg-white border-b border-transparent'
+          ? 'bg-white/80 dark:bg-[#0b0f19]/85 backdrop-blur-md shadow-sm border-b border-black/5 dark:border-white/5' 
+          : 'bg-white dark:bg-[#0b0f19] border-b border-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto w-full">
-        <div className="flex items-center justify-between px-6 py-2 lg:py-2.5">
+      <div className="w-full px-6 lg:px-8">
+        <div className="flex items-center justify-between py-2 lg:py-3">
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer group z-50">
             <Logo className="h-8 w-auto" />
@@ -187,41 +187,39 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                   {isRoute(link.href) ? (
                     <Link
                       to={link.href}
-                      className={`flex items-center px-3 py-1.5 text-sm font-medium transition-colors duration-200 rounded-md ${
+                      className={`flex items-center px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
                         location.pathname === link.href
-                          ? 'text-brand-blue bg-brand-blue/5'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          ? 'text-brand-blue'
+                          : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
                       {link.label}
                       {link.megaMenu && (
-                        <ChevronDown className="w-4 h-4 ml-1.5 opacity-70 transform group-hover:rotate-180 transition-transform duration-300" />
+                        <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-70 transform group-hover:rotate-180 transition-transform duration-300" />
                       )}
                     </Link>
                   ) : (
                     <a
                       href={link.href}
-                      className={`flex items-center px-3 py-1.5 text-sm font-medium transition-colors duration-200 rounded-md ${
+                      className={`flex items-center px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
                         location.pathname === link.href
-                          ? 'text-brand-blue bg-brand-blue/5'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                          ? 'text-brand-blue'
+                          : 'text-gray-600 hover:text-gray-900'
                       } cursor-pointer`}
                     >
                       {link.label}
                       {link.megaMenu && (
-                        <ChevronDown className="w-4 h-4 ml-1.5 opacity-70 transform group-hover:rotate-180 transition-transform duration-300" />
+                        <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-70 transform group-hover:rotate-180 transition-transform duration-300" />
                       )}
                     </a>
                   )}
                 </div>
 
-
-
                 {/* Legacy Mega Menu Dropdown */}
                 {link.megaMenu && (
                   <div className="absolute top-full left-0 w-full pt-1 opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible transition-[opacity,transform,visibility] duration-200 transform translate-y-1 group-hover:translate-y-0 z-50 flex flex-col items-center">
                     
-                    <div className="bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl overflow-hidden p-6 w-[96%] max-w-[1000px] pointer-events-auto text-left relative">
+                    <div className="bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6 w-[96%] max-w-[1000px] pointer-events-auto text-left relative">
                       <div className="flex gap-8">
                         {/* Grid Section */}
                         <div
@@ -313,39 +311,36 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
               </div>
             ))}
 
-            {/* Desktop Admin Link — admin only */}
-            {isAdmin && (
-              <div className="px-1 py-2">
-                <Link
-                  to="/admin"
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold transition-colors rounded-full ${
-                    location.pathname === '/admin'
-                      ? 'text-brand-blue bg-brand-blue/5'
-                      : 'text-brand-blue hover:bg-brand-blue/5'
-                  }`}
-                >
-                  <Shield className="w-4 h-4" />
-                  Admin
-                </Link>
-              </div>
-            )}
           </nav>
 
-          {/* Desktop Auth Buttons */}
+          {/* Desktop Auth/Admin Buttons */}
           <div className="hidden lg:flex items-center gap-2 ml-3">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors duration-200 ${
+                  location.pathname === '/admin'
+                    ? 'text-brand-blue'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                Admin
+              </Link>
+            )}
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-full text-gray-700 hover:bg-black/5 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full text-gray-600 hover:text-gray-900 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-brand-blue text-white flex items-center justify-center text-sm font-bold">
-                    {(profile?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                  <div className="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
+                    {(user.email || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium max-w-[100px] truncate">
-                    {profile?.full_name || user.email}
+                  <span className="text-sm font-medium max-w-[150px] truncate">
+                    {user.email}
                   </span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
@@ -355,31 +350,31 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 6, scale: 0.96 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl border border-black/10 rounded-2xl shadow-xl z-50"
+                      className="absolute right-0 mt-2 w-52 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-2xl shadow-xl z-50"
                     >
-                      <div className="px-4 pt-3 pb-2 border-b border-black/5 rounded-t-2xl">
+                      <div className="px-4 pt-3 pb-2 border-b border-black/5 dark:border-white/5 rounded-t-2xl">
                         <p className="text-sm font-semibold text-gray-900 truncate">{profile?.full_name || 'User'}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                       </div>
                       
                       {/* Theme selection item with submenu on hover */}
-                      <div className="relative group/theme-item border-b border-black/5">
-                        <div className="w-full flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-black/5 cursor-pointer transition-colors">
+                      <div className="relative group/theme-item border-b border-black/5 dark:border-white/5">
+                        <div className="w-full flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer transition-colors">
                           <div className="flex items-center gap-2">
-                            <SunMoon className="w-4 h-4 text-gray-500" />
+                            <ChevronLeft className="w-4 h-4 text-gray-400 group-hover/theme-item:-translate-x-0.5 transition-transform" />
                             <span>Theme</span>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-gray-400 group-hover/theme-item:translate-x-0.5 transition-transform" />
+                          <SunMoon className="w-4 h-4 text-gray-500" />
                         </div>
                         
                         {/* Submenu */}
-                        <div className="absolute right-full top-0 mr-1 w-36 bg-white/95 backdrop-blur-xl border border-black/10 rounded-xl shadow-lg py-1 opacity-0 pointer-events-none group-hover/theme-item:opacity-100 group-hover/theme-item:pointer-events-auto transition-[opacity,transform] duration-200 transform translate-x-1 group-hover/theme-item:translate-x-0">
+                        <div className="absolute right-full top-0 mr-1 w-36 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl shadow-lg py-1 opacity-0 pointer-events-none group-hover/theme-item:opacity-100 group-hover/theme-item:pointer-events-auto transition-[opacity,transform] duration-200 transform translate-x-1 group-hover/theme-item:translate-x-0">
                           {/* Invisible bridge to prevent hover gap closure */}
                           <div className="absolute top-0 -right-3 w-3 h-full bg-transparent" />
                           
                           <button
                             onClick={() => { setTheme('light'); setUserMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 rounded-t-xl transition-colors flex items-center justify-between"
+                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 dark:hover:bg-white/5 rounded-t-xl transition-colors flex items-center justify-between"
                           >
                             <span className="flex items-center gap-1.5">
                               <Sun className="w-3.5 h-3.5 text-gray-400" />
@@ -389,7 +384,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                           </button>
                           <button
                             onClick={() => { setTheme('dark'); setUserMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 rounded-b-xl transition-colors flex items-center justify-between"
+                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 dark:hover:bg-white/5 rounded-b-xl transition-colors flex items-center justify-between"
                           >
                             <span className="flex items-center gap-1.5">
                               <Moon className="w-3.5 h-3.5 text-gray-400" />
@@ -402,7 +397,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
 
                       <button
                         onClick={() => { signOut(); setUserMenuOpen(false); }}
-                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-2xl transition-colors"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-b-2xl transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -450,12 +445,12 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 mx-4 p-4 bg-white/95 backdrop-blur-xl rounded-2xl border border-black/10 lg:hidden flex flex-col space-y-2 shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto overscroll-contain"
+            className="absolute top-full left-0 right-0 mt-2 mx-4 p-4 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 lg:hidden flex flex-col space-y-2 shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto overscroll-contain"
           >
             {navLinks.map((link) => (
               <div key={link.label}>
                 <div
-                  className="flex items-center justify-between px-4 py-3 text-lg font-medium text-gray-700 hover:text-brand-blue hover:bg-black/5 rounded-xl cursor-pointer transition-colors"
+                  className="flex items-center justify-between px-4 py-3 text-lg font-medium text-gray-700 hover:text-brand-blue hover:bg-black/5 dark:hover:bg-white/5 rounded-xl cursor-pointer transition-colors"
                   onClick={() => (link.megaMenu) ? toggleMobileSection(link.label) : null}
                 >
                   {isRoute(link.href) && !link.megaMenu ? (
@@ -482,7 +477,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden bg-black/5 rounded-lg mt-1 ml-4"
+                      className="overflow-hidden bg-black/5 dark:bg-white/5 rounded-lg mt-1 ml-4"
                     >
                       {link.megaMenu.items.map((child) => (
                         isRoute(child.href) ? (
@@ -524,22 +519,22 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-base font-semibold rounded-xl transition-colors ${
                   location.pathname === '/admin'
-                    ? 'text-brand-blue bg-brand-blue/5'
-                    : 'text-brand-blue hover:bg-brand-blue/5'
+                    ? 'text-brand-blue bg-brand-blue/5 dark:bg-brand-blue/10'
+                    : 'text-brand-blue hover:bg-brand-blue/5 dark:hover:bg-brand-blue/10'
                 }`}
               >
-                <Shield className="w-5 h-5" />
+                <User className="w-5 h-5" />
                 Admin Panel
               </Link>
             )}
 
             {/* Mobile Auth section */}
-            <div className="pt-2 border-t border-black/5 mt-2">
+            <div className="pt-2 border-t border-black/5 dark:border-white/5 mt-2">
               {user ? (
                 <div className="px-4 py-3">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center text-base font-bold">
-                      {(profile?.full_name || user.email || 'U').charAt(0).toUpperCase()}
+                      {(user.email || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900 truncate">{profile?.full_name || 'User'}</p>
@@ -548,13 +543,13 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                   </div>
                   
                   {/* Mobile Theme Toggle */}
-                  <div className="mb-3 border border-black/10 rounded-xl overflow-hidden">
-                    <div className="flex bg-gray-50 p-1">
+                  <div className="mb-3 border border-black/10 dark:border-white/10 rounded-xl overflow-hidden">
+                    <div className="flex bg-gray-50 dark:bg-white/5 p-1">
                       <button
                         onClick={() => setTheme('light')}
                         className={`flex-1 flex items-center justify-center gap-2 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                           theme === 'light'
-                            ? 'bg-white text-brand-blue shadow-sm'
+                            ? 'bg-white dark:bg-[#0b0f19] text-brand-blue shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
                         }`}
                       >
@@ -564,7 +559,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                         onClick={() => setTheme('dark')}
                         className={`flex-1 flex items-center justify-center gap-2 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                           theme === 'dark'
-                            ? 'bg-white text-brand-blue shadow-sm'
+                            ? 'bg-white dark:bg-[#0b0f19] text-brand-blue shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
                         }`}
                       >
