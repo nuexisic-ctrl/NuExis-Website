@@ -139,6 +139,42 @@ const ImageUploadZone: React.FC<{
         </div>
       </div>
 
+      {/* Direct URL / Relative Path Input */}
+      <div className="flex gap-2 bg-gray-50 p-3 rounded-2xl border border-gray-200 items-center">
+        <input
+          type="text"
+          placeholder="Or enter direct image path (e.g. /images/Products/Information Kiosk/1.webp)"
+          id="direct-image-url-input"
+          className="flex-1 px-4 py-2 border border-gray-200 bg-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/40"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              const btn = document.getElementById('add-direct-url-btn');
+              if (btn) btn.click();
+            }
+          }}
+        />
+        <button
+          type="button"
+          id="add-direct-url-btn"
+          onClick={() => {
+            const input = document.getElementById('direct-image-url-input') as HTMLInputElement;
+            if (input && input.value.trim()) {
+              const val = input.value.trim();
+              const newItem = { id: uid(), url: val, preview: val };
+              onChange([...images, newItem]);
+              if (!coverImage) {
+                onCoverChange(val);
+              }
+              input.value = '';
+            }
+          }}
+          className="px-4 py-2 bg-brand-blue text-white rounded-xl text-xs font-semibold hover:bg-blue-600 transition-colors whitespace-nowrap"
+        >
+          Add Path
+        </button>
+      </div>
+
       {images.length > 0 && (
         <div>
           <p className="text-xs text-gray-400 mb-2 flex items-center gap-1.5">

@@ -118,6 +118,19 @@ const HeroCarouselModal: React.FC<{
                   </div>
                 </div>
                 <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase">Or Direct Image URL / Path</label>
+                  <input
+                    type="text"
+                    value={imagePreview}
+                    onChange={(e) => {
+                      setImageFile(null);
+                      setImagePreview(e.target.value);
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue pointer-events-auto text-sm text-gray-900"
+                    placeholder="e.g. /images/coursel/Professional AV solution.webp"
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase">Title</label>
                   <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue pointer-events-auto" placeholder="e.g. Pro AV Solutions" />
                 </div>

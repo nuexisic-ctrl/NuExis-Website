@@ -2,15 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { HeroSlide } from '../types';
 import { ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
-
-
-// Import Carousel Images
-import professionalAVSolutionImg from '@/images/coursel/Professional AV solution.webp';
-import digitalSignageImg from '@/images/coursel/Digital Signage.webp';
-import conferenceRoomImg from '@/images/coursel/Conference Room.webp';
-import interactiveTouchDisplayImg from '@/images/coursel/Interactive touch display.webp';
-import activeLedImg from '@/images/coursel/Active LED.webp';
+import { staticHeroSlides } from '../data/staticDb';
 
 // fallback slides removed
 
@@ -45,63 +37,13 @@ const swipePower = (offset: number, velocity: number) => {
 const Hero: React.FC = () => {
   const [[page, direction], setPage] = useState([0, 0]);
   const [resetKey, setResetKey] = useState(0);
-  const [slides, setSlides] = useState<HeroSlide[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchSlides = async () => {
-      // 1. Check local storage for cached slides
-      const cachedSlidesStr = localStorage.getItem('nuexis_hero_cache');
-      let cachedSlides = null;
-      if (cachedSlidesStr) {
-        try {
-          cachedSlides = JSON.parse(cachedSlidesStr);
-          if (cachedSlides && cachedSlides.length > 0) {
-            setSlides(cachedSlides);
-            setLoading(false);
-          }
-        } catch (e) {
-          console.error("Failed to parse hero cache", e);
-        }
-      }
-
-      // 2. Fetch fresh data from Supabase
-      const { data, error } = await supabase.from('hero_carousel').select('*').order('created_at', { ascending: true });
-      if (!error && data) {
-        const newSlides = data.map((d: any) => ({
-          id: d.id,
-          title: d.title,
-          subtitle: d.subtitle,
-          image: d.image_url
-        }));
-        
-        // 3. Update state and cache if different
-        if (JSON.stringify(cachedSlides) !== JSON.stringify(newSlides)) {
-          setSlides(newSlides);
-          localStorage.setItem('nuexis_hero_cache', JSON.stringify(newSlides));
-        }
-      }
-
-      setLoading(false);
-    };
-    fetchSlides();
-
-    // 4. Set up realtime subscription for hero_carousel
-    const heroChannel = supabase
-      .channel('hero_carousel_changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'hero_carousel' },
-        (payload) => {
-          fetchSlides(); // Re-fetch all to keep order correct and cache updated
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(heroChannel);
-    };
-  }, []);
+  const slides: HeroSlide[] = staticHeroSlides.map(slide => ({
+    id: slide.id as any,
+    title: slide.title,
+    subtitle: slide.subtitle,
+    image: slide.image_url
+  }));
 
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection]);
@@ -114,14 +56,6 @@ const Hero: React.FC = () => {
     }, 5000); // Slower auto-advance for better UX (5s)
     return () => clearInterval(interval);
   }, [resetKey, page]);
-
-  if (loading) {
-    return (
-      <section className="relative min-h-screen flex items-center justify-center pt-24 pb-12">
-        <div className="w-10 h-10 border-4 border-brand-blue border-t-transparent rounded-full animate-spin" />
-      </section>
-    );
-  }
 
   if (slides.length === 0) {
     return (

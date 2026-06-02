@@ -157,6 +157,19 @@ const ImageModal: React.FC<{
               }} />
             </div>
             <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase">Or Direct Image URL / Path</label>
+              <input
+                type="text"
+                value={imagePreview}
+                onChange={(e) => {
+                  setImageFile(null);
+                  setImagePreview(e.target.value);
+                }}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue pointer-events-auto text-sm text-gray-900"
+                placeholder="e.g. /images/Products/A Type Standie/a-type-1.webp"
+              />
+            </div>
+            <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase">Alt/Hover Text</label>
               <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-blue/40 focus:border-brand-blue" placeholder="e.g. Main Hall Display Setup" />
             </div>

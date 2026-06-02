@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { staticPartnerLogos } from '../data/staticDb';
 
 interface ClientLogo {
   id: string;
@@ -8,60 +8,8 @@ interface ClientLogo {
 }
 
 const ClientLogos: React.FC = () => {
-    const [clients, setClients] = useState<ClientLogo[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchImages = async () => {
-            // 1. Check local storage for cached logos
-            const cachedLogosStr = localStorage.getItem('nuexis_logos_cache');
-            let cachedLogos = null;
-            if (cachedLogosStr) {
-                try {
-                    cachedLogos = JSON.parse(cachedLogosStr);
-                    if (cachedLogos && cachedLogos.length > 0) {
-                        setClients(cachedLogos);
-                        setLoading(false);
-                    }
-                } catch (e) {
-                    console.error("Failed to parse logos cache", e);
-                }
-            }
-
-            // 2. Fetch fresh data from Supabase
-            const { data } = await supabase
-                .from('carousel_images')
-                .select('*')
-                .order('created_at', { ascending: true });
-            
-            if (data) {
-                // 3. Update state and cache if different
-                if (JSON.stringify(cachedLogos) !== JSON.stringify(data)) {
-                    setClients(data);
-                    localStorage.setItem('nuexis_logos_cache', JSON.stringify(data));
-                }
-            }
-            
-            setLoading(false);
-        };
-        fetchImages();
-
-        // 4. Set up realtime subscription for carousel_images (logos)
-        const logosChannel = supabase
-            .channel('carousel_images_changes')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'carousel_images' },
-                (payload) => {
-                    fetchImages(); // Re-fetch to keep order and cache updated
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(logosChannel);
-        };
-    }, []);
+    const [clients] = useState<ClientLogo[]>(staticPartnerLogos);
+    const [loading] = useState(false);
 
     // Function to cleanly render the content
     const renderCarouselContent = () => {
