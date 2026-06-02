@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
-import { staticPartnerLogos } from '../data/staticDb';
-
-interface ClientLogo {
-  id: string;
-  name: string;
-  image_url: string;
-}
+import React from 'react';
+import { useCatalog } from '../context/CatalogContext';
 
 const ClientLogos: React.FC = () => {
-    const [clients] = useState<ClientLogo[]>(staticPartnerLogos);
-    const [loading] = useState(false);
+    const { partnerLogos, resolveImageUrl } = useCatalog();
+    const clients = partnerLogos;
+    const loading = false;
 
     // Function to cleanly render the content
     const renderCarouselContent = () => {
@@ -38,7 +33,7 @@ const ClientLogos: React.FC = () => {
                             className="flex-shrink-0 flex items-center justify-center p-4 rounded-lg bg-white border border-black/5 hover:border-brand-blue/20 hover:shadow-lg hover:shadow-brand-blue/5 hover:-translate-y-1 transition-all duration-300 group w-40 h-24"
                         >
                             <img
-                                src={client.image_url}
+                                src={resolveImageUrl(client.image_url)}
                                 alt={`${client.name} logo`}
                                 className="h-12 w-auto max-w-[120px] object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
                             />
@@ -53,7 +48,7 @@ const ClientLogos: React.FC = () => {
                             className="flex-shrink-0 flex items-center justify-center p-4 rounded-lg bg-white border border-black/5 hover:border-brand-blue/20 hover:shadow-lg hover:shadow-brand-blue/5 hover:-translate-y-1 transition-all duration-300 group w-40 h-24"
                         >
                             <img
-                                src={client.image_url}
+                                src={resolveImageUrl(client.image_url)}
                                 alt={`${client.name} logo`}
                                 className="h-12 w-auto max-w-[120px] object-contain filter grayscale group-hover:grayscale-0 opacity-60 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
                             />

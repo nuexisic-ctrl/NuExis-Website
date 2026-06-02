@@ -5,13 +5,13 @@ import {
   Loader2, AlertCircle, Image as ImageIcon, Link, ChevronDown,
   CheckCircle2, Youtube, FilePlus2, Star, Download
 } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { useCatalog } from '../context/CatalogContext';
 import { forceDownload } from '../lib/downloadHelper';
 import toast from 'react-hot-toast';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface SpecRow { id: string; key: string; value: string; }
-interface DocItem { id: string; name: string; url: string; type: 'catalog' | 'datasheet' | 'brochure' | 'manual' | 'other'; }
+interface DocItem { id: string; name: string; url: string; file?: File; type: 'catalog' | 'datasheet' | 'brochure' | 'manual' | 'other'; }
 interface ImageItem { id: string; url: string; file?: File; preview?: string; uploading?: boolean; }
 
 interface ProductFormData {
@@ -56,18 +56,9 @@ const uid = () => Math.random().toString(36).slice(2);
 const generateSlug = (n: string) =>
   n.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-function getPublicUrl(bucket: string, path: string) {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
-}
-
-async function uploadToStorage(bucket: string, file: File): Promise<string> {
-  const ext = file.name.split('.').pop();
-  const path = `${Date.now()}-${uid()}.${ext}`;
-  const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: false });
-  if (error) throw new Error(`Upload failed: ${error.message}`);
-  return getPublicUrl(bucket, path);
-}
+const sanitizeName = (name: string) => {
+  return name.replace(/[^a-zA-Z0-9 _-]/g, '').trim() || 'unnamed';
+};
 
 // ── Section Header ─────────────────────────────────────────────────────────────
 const SectionHeader: React.FC<{ icon: React.ReactNode; title: string; subtitle?: string }> = ({ icon, title, subtitle }) => (
@@ -312,6 +303,7 @@ const DocumentsSection: React.FC<{
 
 // ── Main Modal ────────────────────────────────────────────────────────────────
 const AddProductModal: React.FC<AddProductModalProps> = ({ categoryId, categoryName, existingProduct, onClose, onSaved }) => {
+  const catalogContext = useCatalog();
   const isEditing = !!existingProduct?.id;
 
   const [form, setForm] = useState<ProductFormData>(() => {
@@ -352,10 +344,28 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ categoryId, categoryN
   const handleDocUpload = async (file: File) => {
     setUploadingDoc(true);
     try {
-      const url = await uploadToStorage('product-documents', file);
-      setField('documents', [...form.documents, { id: uid(), name: file.name.replace(/\.[^/.]+$/, ''), url, type: 'catalog' }]);
-    } catch { toast.error('Document upload failed'); }
-    finally { setUploadingDoc(false); }
+      const ext = file.name.split('.').pop() || 'pdf';
+      const path = `/images/products/${sanitizeName(categoryName)}/${sanitizeName(form.name || 'product')}/media/${sanitizeName(file.name.replace(/\.[^/.]+$/, ''))}.${ext}`;
+      
+      setForm(f => ({
+        ...f,
+        documents: [
+          ...f.documents,
+          {
+            id: uid(),
+            name: file.name.replace(/\.[^/.]+$/, ''),
+            url: path,
+            file: file,
+            type: 'catalog'
+          }
+        ]
+      }));
+      toast.success('Document added locally');
+    } catch { 
+      toast.error('Document add failed'); 
+    } finally { 
+      setUploadingDoc(false); 
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -365,38 +375,26 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ categoryId, categoryN
     setError(null); setSaving(true);
 
     try {
-      // Upload pending images
-      const uploadedImages: ImageItem[] = [];
-      const pendingFiles = form.images.filter(x => x.file);
-      for (let i = 0; i < form.images.length; i++) {
-        const img = form.images[i];
-        if (img.file) {
-          setUploadProgress(`Uploading image ${i + 1} of ${pendingFiles.length}…`);
-          const url = await uploadToStorage('product-images', img.file);
-          if (img.preview) URL.revokeObjectURL(img.preview);
-          uploadedImages.push({ id: img.id, url });
-          // Update cover_image if this was the selected cover
-          if (form.cover_image === img.preview) {
-            setField('cover_image', url);
-          }
-        } else {
-          uploadedImages.push({ id: img.id, url: img.url });
-        }
-      }
-      setUploadProgress(null);
-
-      // Figure out final cover image
-      let finalCover = form.cover_image;
-      if (!finalCover || finalCover.startsWith('blob:')) {
-        // Map blob preview back to uploaded url
+      let coverImageFile: File | null = null;
+      if (form.cover_image && form.cover_image.startsWith('blob:')) {
         const matched = form.images.find(img => img.preview === form.cover_image);
-        if (matched) {
-          const uploaded = uploadedImages.find(u => u.id === matched.id);
-          finalCover = uploaded?.url || uploadedImages[0]?.url || '';
-        } else {
-          finalCover = uploadedImages[0]?.url || '';
+        if (matched?.file) {
+          coverImageFile = matched.file;
         }
       }
+
+      const galleryImages: (File | string)[] = form.images.map(img => {
+        if (img.file) return img.file;
+        return img.url;
+      });
+
+      const docFiles = form.documents.map(d => ({
+        id: d.id,
+        name: d.name,
+        file: d.file || null,
+        url: d.url,
+        type: d.type
+      }));
 
       const payload = {
         name: form.name.trim(),
@@ -405,23 +403,18 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ categoryId, categoryN
         short_description: form.short_description.trim() || null,
         full_description: form.full_description.trim() || null,
         video_url: form.video_url.trim() || null,
-        cover_image: finalCover || null,
-        images: uploadedImages.map(i => i.url),
-        documents: form.documents,
+        cover_image: form.cover_image, // context mutation will map this to path
+        images: [],
+        documents: [],
         specifications: form.specifications.filter(s => s.key.trim()),
-        category_id: categoryId,
-        updated_at: new Date().toISOString(),
+        category_id: categoryId
       };
 
       let saved: ProductData;
       if (isEditing && existingProduct?.id) {
-        const { data, error: err } = await supabase.from('products').update(payload).eq('id', existingProduct.id).select().single();
-        if (err) throw new Error(err.message.includes('unique') ? 'A product with this slug already exists.' : err.message);
-        saved = data as ProductData;
+        saved = await catalogContext.updateProduct(existingProduct.id, payload, coverImageFile, galleryImages, docFiles) as ProductData;
       } else {
-        const { data, error: err } = await supabase.from('products').insert(payload).select().single();
-        if (err) throw new Error(err.message.includes('unique') ? 'A product with this slug already exists.' : err.message);
-        saved = data as ProductData;
+        saved = await catalogContext.addProduct(payload, coverImageFile, galleryImages, docFiles) as ProductData;
       }
 
       toast.success(isEditing ? 'Product updated!' : 'Product created!');
@@ -429,7 +422,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ categoryId, categoryN
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to save product.';
       setError(msg); toast.error(msg);
-    } finally { setSaving(false); setUploadProgress(null); }
+    } finally { setSaving(false); }
   };
 
   const SECTIONS = [

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { HeroSlide } from '../types';
 import { ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
-import { staticHeroSlides } from '../data/staticDb';
+import { useCatalog } from '../context/CatalogContext';
 
 // fallback slides removed
 
@@ -35,14 +35,15 @@ const swipePower = (offset: number, velocity: number) => {
 };
 
 const Hero: React.FC = () => {
+  const { heroSlides, resolveImageUrl } = useCatalog();
   const [[page, direction], setPage] = useState([0, 0]);
   const [resetKey, setResetKey] = useState(0);
 
-  const slides: HeroSlide[] = staticHeroSlides.map(slide => ({
+  const slides: HeroSlide[] = heroSlides.map(slide => ({
     id: slide.id as any,
     title: slide.title,
     subtitle: slide.subtitle,
-    image: slide.image_url
+    image: resolveImageUrl(slide.image_url)
   }));
 
   const paginate = (newDirection: number) => {

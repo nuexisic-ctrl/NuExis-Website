@@ -1,24 +1,12 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Loader2, Upload, Trash2, Pencil, Image as ImageIcon, LayoutGrid, ChevronRight, Download } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
 import { forceDownload } from '../lib/downloadHelper';
 import toast from 'react-hot-toast';
 import { useCatalog } from '../context/CatalogContext';
 import { GalleryItem, GalleryCategory } from '../types';
 
 const uid = () => Math.random().toString(36).slice(2);
-function getPublicUrl(bucket: string, path: string) {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
-}
-async function uploadImage(file: File): Promise<string> {
-  const ext = file.name.split('.').pop();
-  const path = `gallery/${Date.now()}-${uid()}.${ext}`;
-  const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: false });
-  if (error) throw new Error(error.message);
-  return getPublicUrl('product-images', path);
-}
 
 // ── Category Form Modal ───────────────────────────────────────────────────────
 const CategoryModal: React.FC<{
@@ -26,6 +14,7 @@ const CategoryModal: React.FC<{
   onClose: () => void;
   onDone: () => void;
 }> = ({ existing, onClose, onDone }) => {
+  const catalogContext = useCatalog();
   const [name, setName] = useState(existing?.name ?? '');
   const [saving, setSaving] = useState(false);
 
@@ -35,12 +24,10 @@ const CategoryModal: React.FC<{
     setSaving(true);
     try {
       if (existing) {
-        const { error } = await supabase.from('gallery_categories').update({ name: name.trim() }).eq('id', existing.id);
-        if (error) throw error;
+        await catalogContext.updateGalleryCategory(existing.id, name.trim());
         toast.success('Category updated');
       } else {
-        const { error } = await supabase.from('gallery_categories').insert({ name: name.trim() });
-        if (error) throw error;
+        await catalogContext.addGalleryCategory(name.trim());
         toast.success('Category created');
       }
       onDone();
@@ -86,6 +73,7 @@ const ImageModal: React.FC<{
   onClose: () => void;
   onDone: () => void;
 }> = ({ categoryId, existing, onClose, onDone }) => {
+  const catalogContext = useCatalog();
   const [name, setName] = useState(existing?.name ?? '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(existing?.image_url ?? '');
@@ -98,17 +86,12 @@ const ImageModal: React.FC<{
     if (!existing && !imageFile && !imagePreview) return toast.error('Image is required');
     setSaving(true);
     try {
-      let image_url = existing?.image_url ?? '';
-      if (imageFile) image_url = await uploadImage(imageFile);
-
-      const payload = { category_id: categoryId, name: name.trim(), image_url };
+      const payload = { category_id: categoryId, name: name.trim(), image_url: imagePreview };
       if (existing) {
-        const { error } = await supabase.from('gallery_items').update(payload).eq('id', existing.id);
-        if (error) throw error;
+        await catalogContext.updateGalleryItem(existing.id, payload, imageFile);
         toast.success('Image updated');
       } else {
-        const { error } = await supabase.from('gallery_items').insert(payload);
-        if (error) throw error;
+        await catalogContext.addGalleryItem(payload, imageFile);
         toast.success('Image uploaded');
       }
       onDone();
@@ -133,11 +116,11 @@ const ImageModal: React.FC<{
             <div onClick={() => imgRef.current?.click()} className="relative w-full h-48 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden group hover:border-brand-blue/60 transition-all">
               {imagePreview ? (
                 <>
-                  <img src={imagePreview} className="w-full h-full object-cover" alt="preview" />
+                  <img src={imagePreview.startsWith('blob:') ? imagePreview : catalogContext.resolveImageUrl(imagePreview)} className="w-full h-full object-cover" alt="preview" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                     <span className="text-white text-sm font-semibold flex items-center gap-2"><Upload className="w-4 h-4" /> Change</span>
                     {existing?.image_url && (
-                      <button type="button" onClick={(e) => { e.stopPropagation(); forceDownload(existing.image_url, existing.name || 'image.jpg'); }} className="p-2 bg-white/20 hover:bg-white/40 rounded-lg backdrop-blur-sm text-white transition-colors" title="Download Image">
+                      <button type="button" onClick={(e) => { e.stopPropagation(); forceDownload(catalogContext.resolveImageUrl(existing.image_url), existing.name || 'image.jpg'); }} className="p-2 bg-white/20 hover:bg-white/40 rounded-lg backdrop-blur-sm text-white transition-colors" title="Download Image">
                         <Download className="w-4 h-4" />
                       </button>
                     )}
@@ -188,7 +171,8 @@ const ImageModal: React.FC<{
 
 // ── Main Panel ────────────────────────────────────────────────────────────────
 const AdminGalleryPanel: React.FC = () => {
-  const { galleryCategories, galleryItems, refreshGallery } = useCatalog();
+  const catalogContext = useCatalog();
+  const { galleryCategories, galleryItems } = catalogContext;
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
   
   // Modals
@@ -203,16 +187,23 @@ const AdminGalleryPanel: React.FC = () => {
   const handleDeleteCategory = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (!confirm('Delete this category and all its images?')) return;
-    const { error } = await supabase.from('gallery_categories').delete().eq('id', id);
-    if (error) toast.error('Failed to delete');
-    else { toast.success('Deleted'); refreshGallery(); if (selectedCatId === id) setSelectedCatId(null); }
+    try {
+      await catalogContext.deleteGalleryCategory(id);
+      toast.success('Deleted');
+      if (selectedCatId === id) setSelectedCatId(null);
+    } catch {
+      toast.error('Failed to delete');
+    }
   };
 
   const handleDeleteItem = async (id: string) => {
     if (!confirm('Delete this image?')) return;
-    const { error } = await supabase.from('gallery_items').delete().eq('id', id);
-    if (error) toast.error('Failed to delete');
-    else { toast.success('Deleted'); refreshGallery(); }
+    try {
+      await catalogContext.deleteGalleryItem(id);
+      toast.success('Deleted');
+    } catch {
+      toast.error('Failed to delete');
+    }
   };
 
   return (
@@ -268,11 +259,11 @@ const AdminGalleryPanel: React.FC = () => {
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                 {catItems.map(item => (
                   <div key={item.id} className="group relative aspect-square rounded-xl overflow-hidden bg-gray-100 border border-black/5">
-                    <img src={item.image_url} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={catalogContext.resolveImageUrl(item.image_url)} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-3 flex flex-col justify-end">
                       <p className="text-white text-xs font-semibold mb-2 truncate px-1">{item.name}</p>
                       <div className="flex gap-2">
-                        <button onClick={() => forceDownload(item.image_url, item.name || 'image.jpg')} className="flex-1 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-semibold flex justify-center items-center transition-colors" title="Download"><Download className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => forceDownload(catalogContext.resolveImageUrl(item.image_url), item.name || 'image.jpg')} className="flex-1 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-semibold flex justify-center items-center transition-colors" title="Download"><Download className="w-3.5 h-3.5" /></button>
                         <button onClick={() => { setEditImg(item); setImgModalOpen(true); }} className="flex-1 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white text-xs font-semibold flex justify-center items-center transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
                         <button onClick={() => handleDeleteItem(item.id)} className="flex-1 py-2 bg-red-500/80 hover:bg-red-500 backdrop-blur-sm rounded-lg text-white text-xs font-semibold flex justify-center items-center transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
@@ -285,8 +276,8 @@ const AdminGalleryPanel: React.FC = () => {
         )}
       </div>
 
-      {catModalOpen && <CategoryModal existing={editCat} onClose={() => setCatModalOpen(false)} onDone={refreshGallery} />}
-      {imgModalOpen && selectedCatId && <ImageModal categoryId={selectedCatId} existing={editImg} onClose={() => setImgModalOpen(false)} onDone={refreshGallery} />}
+      {catModalOpen && <CategoryModal existing={editCat} onClose={() => setCatModalOpen(false)} onDone={() => {}} />}
+      {imgModalOpen && selectedCatId && <ImageModal categoryId={selectedCatId} existing={editImg} onClose={() => setImgModalOpen(false)} onDone={() => {}} />}
     </div>
   );
 };

@@ -73,7 +73,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
   const { user, profile, isAdmin, signOut } = useAuth();
-  const { navCategories, softwares, loading: catalogLoading } = useCatalog();
+  const { navCategories, softwares, loading: catalogLoading, resolveImageUrl } = useCatalog();
 
   // Build dynamic navLinks: Home + Product(dynamic) + Software + Resources + Gallery + Support
   const productNavItem: EnhancedNavItem = {
@@ -86,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
         ...navCategories.map(cat => ({
           label: cat.name,
           href: `/category/${cat.slug}`,
-          image: cat.image_url ?? '',
+          image: resolveImageUrl(cat.image_url),
         })),
       ],
     },
@@ -100,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
       items: softwares.map(soft => ({
         label: soft.name,
         href: soft.forward_url,
-        image: soft.image_url,
+        image: resolveImageUrl(soft.image_url),
         imageFit: soft.image_fit,
       })),
       promo: {

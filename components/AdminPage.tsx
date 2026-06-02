@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Package, Shield, Menu, X, ChevronRight, Layers, Image as ImageIcon, Inbox, Bell, Download, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCatalog } from '../context/CatalogContext';
 import { supabase } from '../lib/supabaseClient';
 import { exportAppData } from '../lib/exportHelper';
 import toast from 'react-hot-toast';
@@ -35,6 +36,7 @@ const panels: Record<string, React.ReactNode> = {
 // ── AdminPage ──────────────────────────────────────────────────────────────────
 const AdminPage: React.FC = () => {
   const { profile } = useAuth();
+  const catalogContext = useCatalog();
   const [activeSection, setActiveSection] = useState('products');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadRequests, setUnreadRequests] = useState(0);
@@ -45,12 +47,13 @@ const AdminPage: React.FC = () => {
     setIsExporting(true);
     let toastId = toast.loading('Starting export...');
     try {
-      await exportAppData((msg) => toast.loading(msg, { id: toastId }));
+      await exportAppData(catalogContext, (msg) => toast.loading(msg, { id: toastId }));
     } finally {
       setIsExporting(false);
       toast.dismiss(toastId);
     }
   };
+
 
   useEffect(() => {
     // Top-level realtime listener for incoming catalog requests

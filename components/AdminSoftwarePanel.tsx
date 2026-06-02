@@ -1,29 +1,19 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Loader2, Upload, Trash2, Pencil, Image as ImageIcon, Download } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { useCatalog } from '../context/CatalogContext';
 import { forceDownload } from '../lib/downloadHelper';
 import toast from 'react-hot-toast';
 import { Software } from '../types';
 
 const uid = () => Math.random().toString(36).slice(2);
-function getPublicUrl(bucket: string, path: string) {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
-}
-async function uploadImage(file: File): Promise<string> {
-  const ext = file.name.split('.').pop();
-  const path = `softwares/${Date.now()}-${uid()}.${ext}`;
-  const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: false });
-  if (error) throw new Error(error.message);
-  return getPublicUrl('product-images', path);
-}
 
 const SoftwareModal: React.FC<{
   existing?: Software | null;
   onClose: () => void;
   onDone: () => void;
 }> = ({ existing, onClose, onDone }) => {
+  const catalogContext = useCatalog();
   const isEdit = !!existing;
   const [name, setName] = useState(existing?.name ?? '');
   const [forwardUrl, setForwardUrl] = useState(existing?.forward_url ?? '#');
@@ -41,20 +31,13 @@ const SoftwareModal: React.FC<{
 
     setUploading(true);
     try {
-      let image_url = existing?.image_url ?? '';
-      if (imageFile) {
-        image_url = await uploadImage(imageFile);
-      }
-
-      const payload = { name: name.trim(), forward_url: forwardUrl.trim(), image_url, image_fit: imageFit };
+      const payload = { name: name.trim(), forward_url: forwardUrl.trim(), image_url: imagePreview, image_fit: imageFit };
 
       if (isEdit && existing?.id) {
-        const { error } = await supabase.from('softwares').update(payload).eq('id', existing.id);
-        if (error) throw error;
+        await catalogContext.updateSoftware(existing.id, payload, imageFile);
         toast.success('Software updated!');
       } else {
-        const { error } = await supabase.from('softwares').insert(payload);
-        if (error) throw error;
+        await catalogContext.addSoftware(payload, imageFile);
         toast.success('Software added!');
       }
 
@@ -86,11 +69,11 @@ const SoftwareModal: React.FC<{
                   <div onClick={() => imgRef.current?.click()} className="relative w-full h-36 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden group hover:border-brand-blue/60 transition-all pointer-events-auto">
                     {imagePreview ? (
                       <>
-                        <img src={imagePreview} className="w-full h-full" style={{ objectFit: imageFit as any }} alt="preview" />
+                        <img src={imagePreview.startsWith('blob:') ? imagePreview : catalogContext.resolveImageUrl(imagePreview)} className="w-full h-full" style={{ objectFit: imageFit as any }} alt="preview" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                           <span className="text-white text-sm font-semibold flex items-center gap-2"><Upload className="w-4 h-4" /> Change</span>
                           {existing?.image_url && (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); forceDownload(existing.image_url, existing.name || 'image.png'); }} className="p-2 bg-white/20 hover:bg-white/40 rounded-lg backdrop-blur-sm text-white transition-colors" title="Download Image">
+                            <button type="button" onClick={(e) => { e.stopPropagation(); forceDownload(catalogContext.resolveImageUrl(existing.image_url), existing.name || 'image.png'); }} className="p-2 bg-white/20 hover:bg-white/40 rounded-lg backdrop-blur-sm text-white transition-colors" title="Download Image">
                               <Download className="w-4 h-4" />
                             </button>
                           )}
@@ -156,25 +139,28 @@ const SoftwareModal: React.FC<{
 };
 
 const AdminSoftwarePanel: React.FC = () => {
+  const catalogContext = useCatalog();
   const [softwares, setSoftwares] = useState<Software[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingSoft, setEditingSoft] = useState<Software | null>(null);
 
-  const fetchSoftwares = useCallback(async () => {
+  const fetchSoftwares = useCallback(() => {
     setLoading(true);
-    const { data } = await supabase.from('softwares').select('*').order('created_at', { ascending: true });
-    if (data) setSoftwares(data as Software[]);
+    setSoftwares(catalogContext.softwares);
     setLoading(false);
-  }, []);
+  }, [catalogContext.softwares]);
 
   useEffect(() => { fetchSoftwares(); }, [fetchSoftwares]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this software?')) return;
-    const { error } = await supabase.from('softwares').delete().eq('id', id);
-    if (error) toast.error('Failed to delete');
-    else { toast.success('Deleted successfully'); fetchSoftwares(); }
+    try {
+      await catalogContext.deleteSoftware(id);
+      toast.success('Deleted successfully');
+    } catch {
+      toast.error('Failed to delete');
+    }
   };
 
   return (
@@ -202,12 +188,12 @@ const AdminSoftwarePanel: React.FC = () => {
              {softwares.map(soft => (
                <div key={soft.id} className="grid grid-cols-[80px_1fr_1fr_auto] gap-4 px-6 py-4 items-center hover:bg-blue-50/30 transition-colors">
                  <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-black/5">
-                   <img src={soft.image_url} alt={soft.name} className="w-full h-full object-cover" />
+                   <img src={catalogContext.resolveImageUrl(soft.image_url)} alt={soft.name} className="w-full h-full object-cover" />
                  </div>
                  <span className="font-semibold text-gray-900">{soft.name}</span>
                  <a href={soft.forward_url} target="_blank" rel="noreferrer" className="text-sm text-brand-blue hover:underline truncate">{soft.forward_url}</a>
                  <div className="flex items-center gap-2">
-                   <button onClick={() => forceDownload(soft.image_url, soft.name || 'software.png')} className="p-2 text-gray-400 hover:text-brand-blue bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Download"><Download className="w-4 h-4" /></button>
+                   <button onClick={() => forceDownload(catalogContext.resolveImageUrl(soft.image_url), soft.name || 'software.png')} className="p-2 text-gray-400 hover:text-brand-blue bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Download"><Download className="w-4 h-4" /></button>
                    <button onClick={() => { setEditingSoft(soft); setShowModal(true); }} className="p-2 text-gray-400 hover:text-brand-blue bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Edit"><Pencil className="w-4 h-4" /></button>
                    <button onClick={() => handleDelete(soft.id)} className="p-2 text-gray-400 hover:text-red-500 bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
                  </div>

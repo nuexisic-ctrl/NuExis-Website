@@ -86,7 +86,7 @@ const SpecTable: React.FC<{ specs: { id: string; key: string; value: string }[] 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 const ProductDetailPage: React.FC = () => {
   const { categorySlug, productSlug } = useParams<{ categorySlug: string; productSlug: string }>();
-  const { getCategoryBySlug, getProductBySlug, loading } = useCatalog();
+  const { getCategoryBySlug, getProductBySlug, loading, resolveImageUrl } = useCatalog();
 
   const category = getCategoryBySlug(categorySlug ?? '');
   const product = getProductBySlug(category?.id ?? '', productSlug ?? '');
@@ -103,7 +103,7 @@ const ProductDetailPage: React.FC = () => {
     ...product.images,
   ].filter(Boolean) : [];
 
-  const uniqueImages = Array.from(new Set(allImages));
+  const uniqueImages = Array.from(new Set(allImages)).map(img => resolveImageUrl(img));
 
   if (loading) {
     return (
@@ -231,7 +231,7 @@ const ProductDetailPage: React.FC = () => {
                           </div>
                         </button>
                       ) : (
-                        <a key={doc.id || idx} href={doc.url} target="_blank" rel="noreferrer"
+                        <a key={doc.id || idx} href={resolveImageUrl(doc.url)} target="_blank" rel="noreferrer"
                           className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 bg-white border border-gray-200 rounded-xl hover:border-brand-blue hover:bg-brand-blue/5 transition-all group">
                           <div className="w-8 h-8 sm:w-9 sm:h-9 bg-red-50 text-red-600 rounded-lg flex items-center justify-center shrink-0">
                             <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

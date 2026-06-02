@@ -1,37 +1,18 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Loader2, Upload, Trash2, Pencil, Image as ImageIcon, Download } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { useCatalog, HeroSlideRecord } from '../context/CatalogContext';
 import { forceDownload } from '../lib/downloadHelper';
 import toast from 'react-hot-toast';
 
-export interface HeroSlideRecord {
-  id: string;
-  title: string;
-  subtitle: string;
-  image_url: string;
-  created_at: string;
-}
-
 const uid = () => Math.random().toString(36).slice(2);
-function getPublicUrl(bucket: string, path: string) {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
-}
-
-async function uploadImage(file: File): Promise<string> {
-  const ext = file.name.split('.').pop();
-  const path = `hero/${Date.now()}-${uid()}.${ext}`;
-  const { error } = await supabase.storage.from('carousel-images').upload(path, file, { upsert: false });
-  if (error) throw new Error(error.message);
-  return getPublicUrl('carousel-images', path);
-}
 
 const HeroCarouselModal: React.FC<{
   existing?: HeroSlideRecord | null;
   onClose: () => void;
   onDone: () => void;
 }> = ({ existing, onClose, onDone }) => {
+  const catalogContext = useCatalog();
   const isEdit = !!existing;
   const [title, setTitle] = useState(existing?.title ?? '');
   const [subtitle, setSubtitle] = useState(existing?.subtitle ?? '');
@@ -48,20 +29,13 @@ const HeroCarouselModal: React.FC<{
 
     setUploading(true);
     try {
-      let image_url = existing?.image_url ?? '';
-      if (imageFile) {
-        image_url = await uploadImage(imageFile);
-      }
-
-      const payload = { title: title.trim(), subtitle: subtitle.trim(), image_url };
+      const payload = { title: title.trim(), subtitle: subtitle.trim(), image_url: imagePreview };
 
       if (isEdit && existing?.id) {
-        const { error } = await supabase.from('hero_carousel').update(payload).eq('id', existing.id);
-        if (error) throw error;
+        await catalogContext.updateHeroSlide(existing.id, payload, imageFile);
         toast.success('Slide updated!');
       } else {
-        const { error } = await supabase.from('hero_carousel').insert(payload);
-        if (error) throw error;
+        await catalogContext.addHeroSlide(payload, imageFile);
         toast.success('Slide added!');
       }
 
@@ -93,14 +67,14 @@ const HeroCarouselModal: React.FC<{
                   <div onClick={() => imgRef.current?.click()} className="relative w-full h-36 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden group hover:border-brand-blue/60 transition-all pointer-events-auto">
                     {imagePreview ? (
                       <>
-                        <img src={imagePreview} className="w-full h-full object-cover" alt="preview" />
+                        <img src={imagePreview.startsWith('blob:') ? imagePreview : catalogContext.resolveImageUrl(imagePreview)} className="w-full h-full object-cover" alt="preview" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                          <span className="text-white text-sm font-semibold flex items-center gap-2"><Upload className="w-4 h-4" /> Change</span>
-                          {existing?.image_url && (
-                             <button type="button" onClick={(e) => { e.stopPropagation(); forceDownload(existing.image_url, existing.title || 'slide_image.png'); }} className="p-2 bg-white/20 hover:bg-white/40 rounded-lg backdrop-blur-sm text-white transition-colors" title="Download Image">
-                               <Download className="w-4 h-4" />
-                             </button>
-                          )}
+                           <span className="text-white text-sm font-semibold flex items-center gap-2"><Upload className="w-4 h-4" /> Change</span>
+                           {existing?.image_url && (
+                              <button type="button" onClick={(e) => { e.stopPropagation(); forceDownload(catalogContext.resolveImageUrl(existing.image_url), existing.title || 'slide_image.png'); }} className="p-2 bg-white/20 hover:bg-white/40 rounded-lg backdrop-blur-sm text-white transition-colors" title="Download Image">
+                                <Download className="w-4 h-4" />
+                              </button>
+                           )}
                         </div>
                       </>
                     ) : (
@@ -154,29 +128,27 @@ const HeroCarouselModal: React.FC<{
 };
 
 const AdminHeroCarouselPanel: React.FC = () => {
+  const catalogContext = useCatalog();
   const [slides, setSlides] = useState<HeroSlideRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingSlide, setEditingSlide] = useState<HeroSlideRecord | null>(null);
 
-  const fetchSlides = useCallback(async () => {
+  const fetchSlides = useCallback(() => {
     setLoading(true);
-    const { data } = await supabase.from('hero_carousel').select('*').order('created_at', { ascending: true });
-    if (data) setSlides(data as HeroSlideRecord[]);
+    setSlides(catalogContext.heroSlides);
     setLoading(false);
-  }, []);
+  }, [catalogContext.heroSlides]);
 
   useEffect(() => { fetchSlides(); }, [fetchSlides]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this slide?')) return;
-    
-    const { error } = await supabase.from('hero_carousel').delete().eq('id', id);
-    if (error) {
-       toast.error('Failed to delete');
-    } else { 
-       toast.success('Deleted successfully'); 
-       fetchSlides(); 
+    try {
+      await catalogContext.deleteHeroSlide(id);
+      toast.success('Deleted successfully');
+    } catch {
+      toast.error('Failed to delete');
     }
   };
 
@@ -205,14 +177,14 @@ const AdminHeroCarouselPanel: React.FC = () => {
              {slides.map(slide => (
                <div key={slide.id} className="grid grid-cols-[120px_1fr_auto] gap-4 px-6 py-4 items-center hover:bg-blue-50/30 transition-colors">
                  <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-black/5 flex items-center justify-center">
-                   <img src={slide.image_url} alt={slide.title} className="w-full h-full object-cover" />
+                   <img src={catalogContext.resolveImageUrl(slide.image_url)} alt={slide.title} className="w-full h-full object-cover" />
                  </div>
                  <div className="flex flex-col min-w-0">
-                    <span className="font-semibold text-gray-900 truncate">{slide.title}</span>
-                    <span className="text-sm text-gray-500 truncate mt-0.5 max-w-sm">{slide.subtitle}</span>
+                     <span className="font-semibold text-gray-900 truncate">{slide.title}</span>
+                     <span className="text-sm text-gray-500 truncate mt-0.5 max-w-sm">{slide.subtitle}</span>
                  </div>
                  <div className="flex items-center gap-2">
-                   <button onClick={() => forceDownload(slide.image_url, slide.title || 'slide_image.png')} className="p-2 text-gray-400 hover:text-brand-blue bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Download"><Download className="w-4 h-4" /></button>
+                   <button onClick={() => forceDownload(catalogContext.resolveImageUrl(slide.image_url), slide.title || 'slide_image.png')} className="p-2 text-gray-400 hover:text-brand-blue bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Download"><Download className="w-4 h-4" /></button>
                    <button onClick={() => { setEditingSlide(slide); setShowModal(true); }} className="p-2 text-gray-400 hover:text-brand-blue bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Edit"><Pencil className="w-4 h-4" /></button>
                    <button onClick={() => handleDelete(slide.id)} className="p-2 text-gray-400 hover:text-red-500 bg-white border border-gray-200 shadow-sm rounded-lg transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
                  </div>

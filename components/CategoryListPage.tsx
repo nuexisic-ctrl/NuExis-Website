@@ -5,7 +5,7 @@ import { useCatalog } from '../context/CatalogContext';
 import { Package, Layers, Search, ArrowRight } from 'lucide-react';
 
 const CategoryListPage: React.FC = () => {
-  const { categories, products, loading } = useCatalog();
+  const { categories, products, loading, resolveImageUrl } = useCatalog();
   const [search, setSearch] = useState('');
 
   const getProductCount = (catId: string) => products.filter(p => p.category_id === catId).length;
@@ -77,7 +77,7 @@ const CategoryListPage: React.FC = () => {
                   >
                     <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
                       {cat.image_url ? (
-                        <img src={cat.image_url} alt={cat.name}
+                        <img src={resolveImageUrl(cat.image_url)} alt={cat.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-300">

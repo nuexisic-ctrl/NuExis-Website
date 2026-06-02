@@ -11,7 +11,7 @@ interface GalleryImage {
 }
 
 const GalleryPage: React.FC = () => {
-    const { galleryCategories, galleryItems } = useCatalog();
+    const { galleryCategories, galleryItems, resolveImageUrl } = useCatalog();
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [lightboxImage, setLightboxImage] = useState<GalleryImage | null>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,7 +23,7 @@ const GalleryPage: React.FC = () => {
         const cat = galleryCategories.find(c => c.id === item.category_id);
         return {
             id: item.id,
-            src: item.image_url,
+            src: resolveImageUrl(item.image_url),
             alt: item.name,
             category: cat?.name || 'Unknown'
         };

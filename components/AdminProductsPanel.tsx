@@ -6,7 +6,7 @@ import {
   Pencil, Trash2, MoreHorizontal, Image as ImageIcon,
   ToggleLeft, ToggleRight, Eye, EyeOff, Download
 } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { useCatalog } from '../context/CatalogContext';
 import { forceDownload } from '../lib/downloadHelper';
 import toast from 'react-hot-toast';
 import AddProductModal, { ProductData } from './AddProductModal';
@@ -31,24 +31,13 @@ const formatDate = (d: string) =>
 
 const uid = () => Math.random().toString(36).slice(2);
 
-function getPublicUrl(bucket: string, path: string) {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
-}
-async function uploadImage(file: File): Promise<string> {
-  const ext = file.name.split('.').pop();
-  const path = `categories/${Date.now()}-${uid()}.${ext}`;
-  const { error } = await supabase.storage.from('product-images').upload(path, file, { upsert: false });
-  if (error) throw new Error(error.message);
-  return getPublicUrl('product-images', path);
-}
-
 // ── Category Modal (Add / Edit) ────────────────────────────────────────────────
 const CategoryModal: React.FC<{
   existing?: Category | null;
   onClose: () => void;
   onDone: (cat: Category) => void;
 }> = ({ existing, onClose, onDone }) => {
+  const catalogContext = useCatalog();
   const isEdit = !!existing;
   const [name, setName] = useState(existing?.name ?? '');
   const [slug, setSlug] = useState(existing?.slug ?? '');
@@ -80,22 +69,13 @@ const CategoryModal: React.FC<{
     setError(null); setUploading(true);
 
     try {
-      let image_url = existing?.image_url ?? null;
-      if (imageFile) {
-        image_url = await uploadImage(imageFile);
-      }
-
-      const payload = { name: name.trim(), slug: slug.trim(), image_url, show_in_navbar: showInNavbar };
+      const payload = { name: name.trim(), slug: slug.trim(), image_url: imagePreview, show_in_navbar: showInNavbar };
 
       let saved: Category;
       if (isEdit && existing?.id) {
-        const { data, error: err } = await supabase.from('categories').update(payload).eq('id', existing.id).select().single();
-        if (err) throw new Error(err.message.includes('unique') ? 'A category with this slug already exists.' : err.message);
-        saved = { ...data, productCount: existing.productCount } as Category;
+        saved = await catalogContext.updateCategory(existing.id, payload, imageFile) as Category;
       } else {
-        const { data, error: err } = await supabase.from('categories').insert(payload).select().single();
-        if (err) throw new Error(err.message.includes('unique') ? 'A category with this name/slug already exists.' : err.message);
-        saved = { ...data, productCount: 0 } as Category;
+        saved = await catalogContext.addCategory(payload, imageFile) as Category;
       }
 
       onDone(saved);
@@ -231,6 +211,7 @@ const CategoryDetail: React.FC<{
   onBack: () => void;
   onCategoryUpdated: (cat: Category) => void;
 }> = ({ category, onBack, onCategoryUpdated }) => {
+  const catalogContext = useCatalog();
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -238,35 +219,30 @@ const CategoryDetail: React.FC<{
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(() => {
     setLoading(true);
-    const { data } = await supabase.from('products').select('*').eq('category_id', category.id).order('created_at', { ascending: false });
-    if (data) setProducts(data as ProductData[]);
+    const prods = catalogContext.getProductsByCategory(category.id);
+    setProducts(prods);
     setLoading(false);
-  }, [category.id]);
+  }, [category.id, catalogContext.products]);
 
   React.useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   const handleProductSaved = (product: ProductData) => {
-    setProducts(prev => {
-      const exists = prev.find(p => p.id === product.id);
-      const next = exists ? prev.map(p => p.id === product.id ? product : p) : [product, ...prev];
-      onCategoryUpdated({ ...category, productCount: next.length });
-      return next;
-    });
     setShowAddProduct(false); setEditingProduct(null);
   };
 
   const handleDelete = async (productId: string) => {
     if (!confirm('Delete this product? This cannot be undone.')) return;
     setDeletingId(productId);
-    const { error } = await supabase.from('products').delete().eq('id', productId);
-    if (error) { toast.error('Failed to delete product'); }
-    else {
-      setProducts(prev => { const next = prev.filter(p => p.id !== productId); onCategoryUpdated({ ...category, productCount: next.length }); return next; });
+    try {
+      await catalogContext.deleteProduct(productId);
       toast.success('Product deleted');
+    } catch {
+      toast.error('Failed to delete product');
+    } finally {
+      setDeletingId(null); setOpenMenuId(null);
     }
-    setDeletingId(null); setOpenMenuId(null);
   };
 
   return (
@@ -491,42 +467,36 @@ const CategoriesView: React.FC<{
 
 // ── Root Panel ────────────────────────────────────────────────────────────────
 const AdminProductsPanel: React.FC = () => {
+  const catalogContext = useCatalog();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Category | null>(null);
   const [showCatModal, setShowCatModal] = useState(false);
   const [editingCat, setEditingCat] = useState<Category | null>(null);
 
-  const fetchCategories = useCallback(async () => {
+  const fetchCategories = useCallback(() => {
     setLoading(true);
-    const [{ data: cats }, { data: prods }] = await Promise.all([
-      supabase.from('categories').select('*').order('created_at', { ascending: true }),
-      supabase.from('products').select('category_id'),
-    ]);
     const countMap: Record<string, number> = {};
-    (prods ?? []).forEach(p => { if (p.category_id) countMap[p.category_id] = (countMap[p.category_id] || 0) + 1; });
-    setCategories((cats ?? []).map(c => ({ ...c, productCount: countMap[c.id] || 0 })));
+    catalogContext.products.forEach(p => { if (p.category_id) countMap[p.category_id] = (countMap[p.category_id] || 0) + 1; });
+    setCategories(catalogContext.categories.map(c => ({ ...c, productCount: countMap[c.id] || 0 } as Category)));
     setLoading(false);
-  }, []);
+  }, [catalogContext.categories, catalogContext.products]);
 
   React.useEffect(() => { fetchCategories(); }, [fetchCategories]);
 
   const handleCategoryDone = (cat: Category) => {
-    setCategories(prev => {
-      const exists = prev.find(c => c.id === cat.id);
-      return exists ? prev.map(c => c.id === cat.id ? cat : c) : [...prev, cat];
-    });
     if (editingCat && selected?.id === cat.id) setSelected(cat);
-    if (!editingCat) toast.success(`Category "${cat.name}" created!`);
-    else toast.success(`Category "${cat.name}" updated!`);
     setEditingCat(null);
   };
 
   const handleDeleteCategory = async (id: string) => {
     if (!confirm('Delete this category and all its products? This cannot be undone.')) return;
-    const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (error) toast.error('Failed to delete category');
-    else { setCategories(prev => prev.filter(c => c.id !== id)); toast.success('Category deleted'); }
+    try {
+      await catalogContext.deleteCategory(id);
+      toast.success('Category deleted');
+    } catch {
+      toast.error('Failed to delete category');
+    }
   };
 
   return (

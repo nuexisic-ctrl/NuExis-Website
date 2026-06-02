@@ -15,58 +15,61 @@ const GridCard: React.FC<{
   product: any;
   categorySlug: string | undefined;
   index: number;
-}> = ({ product, categorySlug, index }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 18 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: index * 0.04, duration: 0.3 }}
-  >
-    <Link
-      to={`/product/${categorySlug}/${product.slug}`}
-      className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-black/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full"
+}> = ({ product, categorySlug, index }) => {
+  const { resolveImageUrl } = useCatalog();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04, duration: 0.3 }}
     >
-      {/* Image strip — constrained height so low-res images don't dominate */}
-      <div className="relative bg-gray-100 overflow-hidden" style={{ height: '180px' }}>
-        {product.cover_image || product.images?.[0] ? (
-          <img
-            src={product.cover_image || product.images[0]}
-            alt={product.name}
-            className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <ImageIcon className="w-10 h-10" />
-          </div>
-        )}
-        {product.specifications?.length > 0 && (
-          <span className="absolute top-2.5 right-2.5 text-[10px] font-bold bg-white/90 text-gray-600 px-2 py-0.5 rounded-full shadow-sm border border-black/5">
-            {product.specifications.length} specs
-          </span>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col flex-1 p-4">
-        <h3 className="text-sm font-bold text-gray-900 group-hover:text-brand-blue transition-colors line-clamp-2 leading-snug mb-1.5">
-          {product.name}
-        </h3>
-        {product.heading && (
-          <p className="text-xs text-gray-500 font-medium mb-2 line-clamp-1">{product.heading}</p>
-        )}
-        {product.short_description && (
-          <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed flex-1">
-            {product.short_description}
-          </p>
-        )}
-        <div className="flex items-center justify-end mt-3 pt-3 border-t border-black/5">
-          <span className="flex items-center gap-1 text-xs font-bold text-brand-blue group-hover:gap-2 transition-all">
-            View Details <ArrowRight className="w-3.5 h-3.5" />
-          </span>
+      <Link
+        to={`/product/${categorySlug}/${product.slug}`}
+        className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-black/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full"
+      >
+        {/* Image strip — constrained height so low-res images don't dominate */}
+        <div className="relative bg-gray-100 overflow-hidden" style={{ height: '180px' }}>
+          {product.cover_image || product.images?.[0] ? (
+            <img
+              src={resolveImageUrl(product.cover_image || product.images[0])}
+              alt={product.name}
+              className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-300">
+              <ImageIcon className="w-10 h-10" />
+            </div>
+          )}
+          {product.specifications?.length > 0 && (
+            <span className="absolute top-2.5 right-2.5 text-[10px] font-bold bg-white/90 text-gray-600 px-2 py-0.5 rounded-full shadow-sm border border-black/5">
+              {product.specifications.length} specs
+            </span>
+          )}
         </div>
-      </div>
-    </Link>
-  </motion.div>
-);
+
+        {/* Content */}
+        <div className="flex flex-col flex-1 p-4">
+          <h3 className="text-sm font-bold text-gray-900 group-hover:text-brand-blue transition-colors line-clamp-2 leading-snug mb-1.5">
+            {product.name}
+          </h3>
+          {product.heading && (
+            <p className="text-xs text-gray-500 font-medium mb-2 line-clamp-1">{product.heading}</p>
+          )}
+          {product.short_description && (
+            <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed flex-1">
+              {product.short_description}
+            </p>
+          )}
+          <div className="flex items-center justify-end mt-3 pt-3 border-t border-black/5">
+            <span className="flex items-center gap-1 text-xs font-bold text-brand-blue group-hover:gap-2 transition-all">
+              View Details <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
 // ───────────────────────────────────────────────────
 // Product Card — LIST view (text-first, image small)
@@ -75,58 +78,61 @@ const ListCard: React.FC<{
   product: any;
   categorySlug: string | undefined;
   index: number;
-}> = ({ product, categorySlug, index }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -12 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ delay: index * 0.035, duration: 0.28 }}
-  >
-    <Link
-      to={`/product/${categorySlug}/${product.slug}`}
-      className="group flex items-center gap-4 sm:gap-5 bg-white rounded-2xl border border-black/5 shadow-sm hover:shadow-lg hover:border-brand-blue/20 transition-all duration-300 p-3 sm:p-4 overflow-hidden"
+}> = ({ product, categorySlug, index }) => {
+  const { resolveImageUrl } = useCatalog();
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.035, duration: 0.28 }}
     >
-      {/* Thumbnail — small, doesn't dominate */}
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gray-50 overflow-hidden shrink-0 border border-black/5 flex items-center justify-center text-gray-300">
-        {product.cover_image || product.images?.[0] ? (
-          <img
-            src={product.cover_image || product.images[0]}
-            alt={product.name}
-            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-400"
-          />
-        ) : (
-          <Package className="w-8 h-8" />
-        )}
-      </div>
+      <Link
+        to={`/product/${categorySlug}/${product.slug}`}
+        className="group flex items-center gap-4 sm:gap-5 bg-white rounded-2xl border border-black/5 shadow-sm hover:shadow-lg hover:border-brand-blue/20 transition-all duration-300 p-3 sm:p-4 overflow-hidden"
+      >
+        {/* Thumbnail — small, doesn't dominate */}
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gray-50 overflow-hidden shrink-0 border border-black/5 flex items-center justify-center text-gray-300">
+          {product.cover_image || product.images?.[0] ? (
+            <img
+              src={resolveImageUrl(product.cover_image || product.images[0])}
+              alt={product.name}
+              className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-400"
+            />
+          ) : (
+            <Package className="w-8 h-8" />
+          )}
+        </div>
 
-      {/* Content — primary focus */}
-      <div className="flex-1 min-w-0">
-        <h3 className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-brand-blue transition-colors line-clamp-1">
-          {product.name}
-        </h3>
-        {product.heading && (
-          <p className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5 line-clamp-1">{product.heading}</p>
-        )}
-        {product.short_description && (
-          <p className="text-xs text-gray-400 mt-1.5 line-clamp-2 leading-relaxed hidden sm:block">
-            {product.short_description}
-          </p>
-        )}
-        {product.specifications?.length > 0 && (
-          <div className="flex items-center gap-3 mt-2">
-            <span className="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-              {product.specifications.length} specifications
-            </span>
-          </div>
-        )}
-      </div>
+        {/* Content — primary focus */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm sm:text-base font-bold text-gray-900 group-hover:text-brand-blue transition-colors line-clamp-1">
+            {product.name}
+          </h3>
+          {product.heading && (
+            <p className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5 line-clamp-1">{product.heading}</p>
+          )}
+          {product.short_description && (
+            <p className="text-xs text-gray-400 mt-1.5 line-clamp-2 leading-relaxed hidden sm:block">
+              {product.short_description}
+            </p>
+          )}
+          {product.specifications?.length > 0 && (
+            <div className="flex items-center gap-3 mt-2">
+              <span className="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                {product.specifications.length} specifications
+              </span>
+            </div>
+          )}
+        </div>
 
-      {/* Arrow */}
-      <div className="w-8 h-8 rounded-full border border-gray-200 group-hover:border-brand-blue group-hover:bg-brand-blue flex items-center justify-center shrink-0 transition-all">
-        <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
-      </div>
-    </Link>
-  </motion.div>
-);
+        {/* Arrow */}
+        <div className="w-8 h-8 rounded-full border border-gray-200 group-hover:border-brand-blue group-hover:bg-brand-blue flex items-center justify-center shrink-0 transition-all">
+          <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-white transition-colors" />
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
 
 // ───────────────────────────────────────────────────
 // Main Page
