@@ -35,6 +35,8 @@ import CookieConsent from './components/CookieConsent';
 import WhatsAppButton from './components/WhatsAppButton';
 import { useAuth } from './context/AuthContext';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 // Guard: only lets admins through
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isAdmin, loading } = useAuth();
@@ -126,11 +128,13 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <CatalogProvider>
-        <AppContent />
-      </CatalogProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <CatalogProvider>
+          <AppContent />
+        </CatalogProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

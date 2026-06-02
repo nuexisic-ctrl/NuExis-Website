@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown, ChevronRight, FileText, HelpCircle, MessageSquare, LogOut, LogIn, UserPlus, Shield, Layers } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, FileText, HelpCircle, MessageSquare, LogOut, LogIn, UserPlus, Shield, Layers, SunMoon, Sun, Moon, Check } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCatalog } from '../context/CatalogContext';
+import { useTheme } from '../context/ThemeContext';
 
 // Import Software Dropdown Images
 import nuexisSignageImg from '@/images/software-dropdown/NuExis Signage.webp';
@@ -74,6 +75,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
   const { user, profile, isAdmin, signOut } = useAuth();
   const { navCategories, softwares, loading: catalogLoading, resolveImageUrl } = useCatalog();
+  const { theme, setTheme } = useTheme();
 
   // Build dynamic navLinks: Home + Product(dynamic) + Software + Resources + Gallery + Support
   const productNavItem: EnhancedNavItem = {
@@ -359,6 +361,42 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                         <p className="text-sm font-semibold text-gray-900 truncate">{profile?.full_name || 'User'}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                       </div>
+                      
+                      {/* Theme selection item with submenu on hover */}
+                      <div className="relative group/theme-item border-b border-black/5">
+                        <div className="w-full flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-black/5 cursor-pointer transition-colors">
+                          <div className="flex items-center gap-2">
+                            <SunMoon className="w-4 h-4 text-gray-500" />
+                            <span>Theme</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-gray-400 group-hover/theme-item:translate-x-0.5 transition-transform" />
+                        </div>
+                        
+                        {/* Submenu */}
+                        <div className="absolute right-full top-0 mr-1 w-36 bg-white/95 backdrop-blur-xl border border-black/10 rounded-xl shadow-lg overflow-hidden py-1 opacity-0 pointer-events-none group-hover/theme-item:opacity-100 group-hover/theme-item:pointer-events-auto transition-[opacity,transform] duration-200 transform translate-x-1 group-hover/theme-item:translate-x-0">
+                          <button
+                            onClick={() => { setTheme('light'); setUserMenuOpen(false); }}
+                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 transition-colors flex items-center justify-between"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Sun className="w-3.5 h-3.5 text-gray-400" />
+                              Light mode
+                            </span>
+                            {theme === 'light' && <Check className="w-3.5 h-3.5 text-brand-blue" />}
+                          </button>
+                          <button
+                            onClick={() => { setTheme('dark'); setUserMenuOpen(false); }}
+                            className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-black/5 transition-colors flex items-center justify-between"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Moon className="w-3.5 h-3.5 text-gray-400" />
+                              Dark mode
+                            </span>
+                            {theme === 'dark' && <Check className="w-3.5 h-3.5 text-brand-blue" />}
+                          </button>
+                        </div>
+                      </div>
+
                       <button
                         onClick={() => { signOut(); setUserMenuOpen(false); }}
                         className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -505,6 +543,33 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
                   </div>
+                  
+                  {/* Mobile Theme Toggle */}
+                  <div className="mb-3 border border-black/10 rounded-xl overflow-hidden">
+                    <div className="flex bg-gray-50 p-1">
+                      <button
+                        onClick={() => setTheme('light')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                          theme === 'light'
+                            ? 'bg-white text-brand-blue shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        <Sun className="w-3.5 h-3.5" /> Light
+                      </button>
+                      <button
+                        onClick={() => setTheme('dark')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                          theme === 'dark'
+                            ? 'bg-white text-brand-blue shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                      >
+                        <Moon className="w-3.5 h-3.5" /> Dark
+                      </button>
+                    </div>
+                  </div>
+
                   <button
                     onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
                     className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-50 text-red-600 font-medium text-sm hover:bg-red-100 transition-colors"
