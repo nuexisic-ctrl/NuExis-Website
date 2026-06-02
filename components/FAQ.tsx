@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Minus, Search } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface FAQItem {
     question: string;
@@ -207,9 +208,9 @@ const FAQ: React.FC = () => {
                     <p className="text-sm mb-6 opacity-90 max-w-xl mx-auto">
                         Our team of AV experts is here to help. Contact us for personalized assistance and detailed information about our solutions.
                     </p>
-                    <button className="px-8 py-3 bg-white text-brand-blue font-semibold rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all duration-300 hover:scale-105">
+                    <Link to="/support" className="inline-block px-8 py-3 bg-white text-brand-blue font-semibold rounded-full hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all duration-300 hover:scale-105">
                         Contact Support Team
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

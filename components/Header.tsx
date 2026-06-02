@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, ChevronDown, ChevronRight, FileText, HelpCircle, MessageSquare, LogOut, LogIn, Shield, Layers } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, FileText, HelpCircle, MessageSquare, LogOut, LogIn, UserPlus, Shield, Layers } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
@@ -374,9 +374,15 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
               <>
                 <button
                   onClick={onLoginClick}
-                  className="px-4 py-1.5 text-sm font-medium text-white bg-gray-900 hover:bg-black rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+                  className="px-4 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-black/5 rounded-lg transition-colors flex items-center gap-1.5"
                 >
                   Log In <LogIn className="w-4 h-4 ml-0.5" />
+                </button>
+                <button
+                  onClick={onSignupClick}
+                  className="px-4 py-1.5 text-sm font-medium text-white bg-brand-blue hover:bg-blue-600 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+                >
+                  Sign Up <UserPlus className="w-4 h-4 ml-0.5" />
                 </button>
               </>
             )}
@@ -507,12 +513,18 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
                   </button>
                 </div>
               ) : (
-                <div className="px-4 py-2">
+                <div className="px-4 py-2 flex flex-col gap-2">
                   <button
                     onClick={() => { onLoginClick(); setIsMobileMenuOpen(false); }}
-                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-brand-blue border border-brand-blue hover:bg-brand-blue/5 transition-colors"
+                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors text-center"
                   >
                     Log In
+                  </button>
+                  <button
+                    onClick={() => { onSignupClick(); setIsMobileMenuOpen(false); }}
+                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-brand-blue hover:bg-blue-600 transition-colors text-center shadow-sm"
+                  >
+                    Sign Up
                   </button>
                 </div>
               )}
