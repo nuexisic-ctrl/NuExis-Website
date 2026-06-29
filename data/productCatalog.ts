@@ -294,6 +294,57 @@ export const productCatalog: { [key: string]: SeriesNode } = {
                 ]
             }
         }
+    },
+    avit_furniture: {
+        label: "AV&IT Furniture",
+        categories: {
+            chairs: {
+                label: "Ergonomic Chairs",
+                subcategories: [
+                    { 
+                        label: "Medium Back Ergonomic Chair", 
+                        id: "medium-back-ergonomic-chair", 
+                        imageFolder: "Medium Back Ergonomic Chair",
+                        description: "Medium Back Ergonomic Chair for Office Work at Home, for Men & Study Chair, Computer Chair with 2D Adjustable Headrest & Lumbar Support, 120° Tilt & Lock Mechanism Black",
+                        specs: [
+                            { label: "Headrest", value: "2D Adjustable" },
+                            { label: "Lumbar Support", value: "Adjustable Support" },
+                            { label: "Mechanism", value: "120° Tilt & Lock" },
+                            { label: "Color", value: "Black" }
+                        ]
+                    },
+                    { 
+                        label: "High Back Ergonomic Chair", 
+                        id: "high-back-ergonomic-chair", 
+                        imageFolder: "High Back Ergonomic Chair",
+                        description: "High Back Ergonomic Chair for Office Work at Home, for Men & Study Chair, Computer Chair with 2D Adjustable Headrest & Lumbar Support, 120° Tilt & Lock Mechanism Black",
+                        specs: [
+                            { label: "Headrest", value: "2D Adjustable" },
+                            { label: "Lumbar Support", value: "Adjustable Support" },
+                            { label: "Mechanism", value: "120° Tilt & Lock" },
+                            { label: "Color", value: "Black" }
+                        ]
+                    }
+                ]
+            },
+            workstations: {
+                label: "Workstations",
+                subcategories: [
+                    {
+                        label: "Nuexis Particle Board Modular Workstation",
+                        id: "nuexis-particle-board-modular-workstation",
+                        imageFolder: "Nuexis Particle Board Modular Workstation",
+                        description: "Wooden Particle Board Top, CRCA Sheet Single Drawer, Metal Frame, Powder Coated. 1200 X 600 X 750 (WXDXH) / 900 X 600 X 750 (WXDXH)",
+                        specs: [
+                            { label: "Top Material", value: "Wooden Particle Board" },
+                            { label: "Drawer", value: "CRCA Sheet Single Drawer" },
+                            { label: "Frame", value: "Metal Frame, Powder Coated" },
+                            { label: "Dimensions (mm)", value: "1200 x 600 x 750 / 900 x 600 x 750 (WxDxH)" }
+                        ]
+                    }
+                ]
+            }
+        }
     }
 };
 

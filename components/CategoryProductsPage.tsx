@@ -7,6 +7,8 @@ import {
   ImageIcon, Loader2, LayoutGrid, List,
   X, ChevronDown
 } from 'lucide-react';
+import Seo from './Seo';
+import { buildBreadcrumbLd, buildItemListLd, SITE_NAME } from '../lib/seo';
 
 // ───────────────────────────────────────────────────
 // Product Card — GRID view
@@ -169,6 +171,26 @@ const CategoryProductsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 sm:pt-24 pb-16 sm:pb-20">
+
+      {category && (
+        <Seo
+          title={`${category.name} — Products & Solutions`}
+          description={`Explore ${categoryProducts.length} ${category.name} product${categoryProducts.length !== 1 ? 's' : ''} from ${SITE_NAME}. Professional ${category.name.toLowerCase()} solutions with specifications, documentation, and support.`}
+          canonicalPath={`/category/${slug}`}
+          keywords={`${category.name}, NuExis ${category.name}, ${category.name} price, ${category.name} India, ${categoryProducts.map(p => p.name).slice(0, 8).join(', ')}`}
+          jsonLd={[
+            buildBreadcrumbLd([
+              { name: 'Home', path: '/' },
+              { name: 'Categories', path: '/categories' },
+              { name: category.name, path: `/category/${slug}` },
+            ]),
+            buildItemListLd(
+              categoryProducts.map(p => ({ name: p.name, path: `/product/${slug}/${p.slug}` })),
+              `${category.name} Products`
+            ),
+          ]}
+        />
+      )}
 
       {/* ── Category Banner — minimal text-focused ── */}
       <div className="bg-white border-b border-black/5 shadow-sm">

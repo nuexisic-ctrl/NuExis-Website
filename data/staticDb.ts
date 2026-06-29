@@ -65,6 +65,14 @@ export const staticCategories = [
     "image_url": "/images/products/Video Conferencing System/NUEXIS - NE-PTZ12X20X30X/images/cover_image.webp",
     "show_in_navbar": true,
     "created_at": "2026-06-02T05:02:57.781Z"
+  },
+  {
+    "id": "e8a11bc3-db21-419b-a45e-fc610fa1a173",
+    "name": "AV&IT Furniture",
+    "slug": "avit-furniture",
+    "image_url": "/images/products/AVIT Furniture/Medium Back Ergonomic Chair/images/cover_image.png",
+    "show_in_navbar": true,
+    "created_at": "2026-06-09T05:00:00.000Z"
   }
 ];
 
@@ -508,6 +516,75 @@ export const staticProducts = [
     "category_id": "d1af2a01-3f0c-45b5-9acb-949bb1f2a824",
     "created_at": "2026-04-15T15:59:12.068602+00:00",
     "updated_at": "2026-04-15T16:00:15.082+00:00"
+  },
+  {
+    "id": "b1e222ff-3c0c-4203-ab1f-aa305a7324d8",
+    "name": "Medium Back Ergonomic Chair",
+    "slug": "medium-back-ergonomic-chair",
+    "heading": "Medium Back Ergonomic Study & Office Chair",
+    "short_description": "Medium Back Ergonomic Chair for Office Work at Home, for Men & Study Chair, Computer Chair with 2D Adjustable Headrest & Lumbar Support, 120° Tilt & Lock Mechanism Black",
+    "full_description": null,
+    "cover_image": "/images/products/AVIT Furniture/Medium Back Ergonomic Chair/images/cover_image.png",
+    "images": [
+      "/images/products/AVIT Furniture/Medium Back Ergonomic Chair/images/cover_image.png"
+    ],
+    "video_url": null,
+    "documents": [],
+    "specifications": [
+      { "id": "spec1", "key": "Headrest", "value": "2D Adjustable" },
+      { "id": "spec2", "key": "Lumbar Support", "value": "Adjustable Support" },
+      { "id": "spec3", "key": "Mechanism", "value": "120° Tilt & Lock" },
+      { "id": "spec4", "key": "Color", "value": "Black" }
+    ],
+    "category_id": "e8a11bc3-db21-419b-a45e-fc610fa1a173",
+    "created_at": "2026-06-09T05:00:00.000Z",
+    "updated_at": "2026-06-09T05:00:00.000Z"
+  },
+  {
+    "id": "c2f333ff-3c0c-4203-ab1f-aa305a7324d8",
+    "name": "High Back Ergonomic Chair",
+    "slug": "high-back-ergonomic-chair",
+    "heading": "High Back Ergonomic Executive Chair",
+    "short_description": "High Back Ergonomic Chair for Office Work at Home, for Men & Study Chair, Computer Chair with 2D Adjustable Headrest & Lumbar Support, 120° Tilt & Lock Mechanism Black",
+    "full_description": null,
+    "cover_image": "/images/products/AVIT Furniture/High Back Ergonomic Chair/images/cover_image.png",
+    "images": [
+      "/images/products/AVIT Furniture/High Back Ergonomic Chair/images/cover_image.png"
+    ],
+    "video_url": null,
+    "documents": [],
+    "specifications": [
+      { "id": "spec5", "key": "Headrest", "value": "2D Adjustable" },
+      { "id": "spec6", "key": "Lumbar Support", "value": "Adjustable Support" },
+      { "id": "spec7", "key": "Mechanism", "value": "120° Tilt & Lock" },
+      { "id": "spec8", "key": "Color", "value": "Black" }
+    ],
+    "category_id": "e8a11bc3-db21-419b-a45e-fc610fa1a173",
+    "created_at": "2026-06-09T05:00:00.000Z",
+    "updated_at": "2026-06-09T05:00:00.000Z"
+  },
+  {
+    "id": "d3a444ff-3c0c-4203-ab1f-aa305a7324d8",
+    "name": "Nuexis Particle Board Modular Workstation",
+    "slug": "nuexis-particle-board-modular-workstation",
+    "heading": "Particle Board Modular Workstation",
+    "short_description": "Wooden Particle Board Top, CRCA Sheet Single Drawer, Metal Frame, Powder Coated. Dimensions: 1200 X 600 X 750 (WXDXH) / 900 X 600 X 750 (WXDXH)",
+    "full_description": null,
+    "cover_image": "/images/products/AVIT Furniture/Nuexis Particle Board Modular Workstation/images/cover_image.jpeg",
+    "images": [
+      "/images/products/AVIT Furniture/Nuexis Particle Board Modular Workstation/images/cover_image.jpeg"
+    ],
+    "video_url": null,
+    "documents": [],
+    "specifications": [
+      { "id": "spec9", "key": "Top Material", "value": "Wooden Particle Board" },
+      { "id": "spec10", "key": "Drawer", "value": "CRCA Sheet Single Drawer" },
+      { "id": "spec11", "key": "Frame", "value": "Metal Frame, Powder Coated" },
+      { "id": "spec12", "key": "Dimensions (mm)", "value": "1200 x 600 x 750 / 900 x 600 x 750 (WxDxH)" }
+    ],
+    "category_id": "e8a11bc3-db21-419b-a45e-fc610fa1a173",
+    "created_at": "2026-06-09T05:00:00.000Z",
+    "updated_at": "2026-06-09T05:00:00.000Z"
   }
 ];
 
@@ -524,7 +601,7 @@ export const staticSoftwares = [
     "id": "9557ee33-192b-4424-b054-a032c35b2960",
     "name": "Nuexis Signage",
     "image_url": "/images/software/Nuexis Signage.webp",
-    "forward_url": "#",
+    "forward_url": "https://nuexis-signage-openclaude.vercel.app/",
     "image_fit": "contain",
     "created_at": "2026-04-14T06:45:27.810079+00:00"
   },

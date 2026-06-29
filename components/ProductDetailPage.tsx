@@ -8,6 +8,8 @@ import {
   Package, Check, Loader2, ImageIcon, Lock
 } from 'lucide-react';
 import CatalogRequestModal from './CatalogRequestModal';
+import Seo from './Seo';
+import { buildProductLd, buildBreadcrumbLd, SITE_NAME } from '../lib/seo';
 
 // ── Image Lightbox ────────────────────────────────────────────────────────────
 const Lightbox: React.FC<{ images: string[]; initial: number; onClose: () => void }> = ({ images, initial, onClose }) => {
@@ -124,6 +126,32 @@ const ProductDetailPage: React.FC = () => {
 
   return (
     <>
+      <Seo
+        title={`${product.name}${product.heading ? ' - ' + product.heading : ''}`}
+        description={
+          (product.short_description || `${product.name} from ${SITE_NAME}. ${category.name} solution.`).slice(0, 200)
+        }
+        canonicalPath={`/product/${categorySlug}/${productSlug}`}
+        keywords={`${product.name}, ${product.heading || ''}, ${category.name}, NuExis ${product.name}, NuExis ${category.name}, NuExis`}
+        type="product"
+        image={product.cover_image || product.images?.[0] || undefined}
+        jsonLd={[
+          buildProductLd({
+            name: product.name,
+            description: product.short_description || product.full_description,
+            images: uniqueImages.length ? uniqueImages : undefined,
+            categoryName: category.name,
+            path: `/product/${categorySlug}/${productSlug}`,
+            sku: product.slug || undefined,
+          }),
+          buildBreadcrumbLd([
+            { name: 'Home', path: '/' },
+            { name: 'Categories', path: '/categories' },
+            { name: category.name, path: `/category/${categorySlug}` },
+            { name: product.name, path: `/product/${categorySlug}/${productSlug}` },
+          ]),
+        ]}
+      />
       <div className="min-h-screen bg-gray-50 pt-20 sm:pt-24 pb-16 sm:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

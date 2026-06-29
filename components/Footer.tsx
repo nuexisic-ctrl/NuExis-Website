@@ -22,9 +22,15 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-bold text-gray-900 mb-4">Solutions</h4>
             <ul className="space-y-2">
-              {['Digital Signage', 'Video Conferencing', 'LED Walls', 'Control Systems'].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">{item}</a>
+              {[
+                { label: 'Digital Signage', to: '/category/digital-signage-series' },
+                { label: 'Video Conferencing', to: '/category/video-conferencing-system' },
+                { label: 'Active LED Walls', to: '/category/active-led' },
+                { label: 'Switching & Controls', to: '/category/switching-and-controls' },
+                { label: 'All Products', to: '/categories' },
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-gray-600 hover:text-brand-blue transition-colors text-sm">{item.label}</Link>
                 </li>
               ))}
             </ul>
@@ -38,13 +44,13 @@ const Footer: React.FC = () => {
                 <a href="/#about" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">About Us</a>
               </li>
               <li>
+                <Link to="/gallery" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Gallery</Link>
+              </li>
+              <li>
+                <Link to="/support" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Support</Link>
+              </li>
+              <li>
                 <Link to="/sitemap" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Sitemap</Link>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Careers</a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-brand-blue transition-colors text-sm">Legal</a>
               </li>
             </ul>
           </div>

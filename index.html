@@ -31,9 +31,9 @@
     content="default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://aistudiocdn.com;">
   <title>NuExis - Professional AV Solutions & Digital Signage</title>
   <meta name="description"
-    content="NuExis offers cutting-edge audio visual technology, digital signage, and conference room solutions designed for seamless communication and collaboration." />
+    content="NuExis offers cutting-edge audio visual technology, digital signage, interactive touch displays, active LED video walls, digital podiums, pro audio, and video conferencing solutions for enterprises across India." />
   <meta name="keywords"
-    content="AV solutions, digital signage, conference room technology, pro audio, interactive displays, NuExis" />
+    content="NuExis, Nuexis, NuExis India, AV solutions, audio visual solutions, digital signage, interactive touch display, active LED video wall, LED display, digital podium, pro audio system, video conferencing system, conference room technology, professional AV India" />
   <meta name="author" content="NuExis" />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#ffffff" />
@@ -41,11 +41,11 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://nuexis.com/" />
+  <meta property="og:site_name" content="NuExis" />
   <meta property="og:title" content="NuExis - Professional AV Solutions & Digital Signage" />
   <meta property="og:description"
     content="Transform your spaces with cutting-edge audio visual technology designed for seamless communication and collaboration." />
-  <meta property="og:image"
-    content="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" />
+  <meta property="og:image" content="https://nuexis.com/images/NuExis Signage.webp" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
@@ -53,14 +53,69 @@
   <meta property="twitter:title" content="NuExis - Professional AV Solutions & Digital Signage" />
   <meta property="twitter:description"
     content="Transform your spaces with cutting-edge audio visual technology designed for seamless communication and collaboration." />
-  <meta property="twitter:image"
-    content="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" />
+  <meta property="twitter:image" content="https://nuexis.com/images/NuExis Signage.webp" />
 
   <!-- Canonical -->
   <link rel="canonical" href="https://nuexis.com/" />
 
+  <!-- Sitemap -->
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
   <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" />
+
+  <!-- Structured data: Organization + WebSite (sitelinks search box). Static so non-JS crawlers can read it. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://nuexis.com/#organization",
+        "name": "NuExis",
+        "legalName": "NuExis Inc.",
+        "url": "https://nuexis.com/",
+        "logo": "https://nuexis.com/images/NuExis Signage.webp",
+        "image": "https://nuexis.com/images/NuExis Signage.webp",
+        "description": "NuExis supplies professional audio-visual technology: digital signage, interactive touch displays, active LED video walls, digital podiums, pro audio systems, and video conferencing solutions for enterprises across India.",
+        "email": "support@nuexis.com",
+        "telephone": "+91-9625800589",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Kunwar Singh Nagar, Nangloi",
+          "addressLocality": "Delhi",
+          "postalCode": "110041",
+          "addressCountry": "IN"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-9625800589",
+          "email": "support@nuexis.com",
+          "contactType": "customer support",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Hindi"]
+        },
+        "sameAs": ["https://www.instagram.com/nuexis.inc/"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://nuexis.com/#website",
+        "name": "NuExis",
+        "alternateName": ["NuExis Inc.", "Nuexis"],
+        "url": "https://nuexis.com/",
+        "publisher": { "@id": "https://nuexis.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://nuexis.com/sitemap?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

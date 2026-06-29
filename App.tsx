@@ -35,6 +35,8 @@ const ProductDetailPage = lazy(() => import('./components/ProductDetailPage'));
 import CookieConsent from './components/CookieConsent';
 import WhatsAppButton from './components/WhatsAppButton';
 import { useAuth } from './context/AuthContext';
+import Seo from './components/Seo';
+import { buildOrganizationLd, buildWebsiteLd, DEFAULT_DESCRIPTION, BRAND_KEYWORDS } from './lib/seo';
 
 import { ThemeProvider } from './context/ThemeContext';
 
@@ -55,6 +57,14 @@ const ScrollToTop = () => {
 
 const HomePage: React.FC = () => (
   <>
+    <Seo
+      title="NuExis — Professional AV Solutions, Digital Signage & LED Displays"
+      rawTitle
+      description={DEFAULT_DESCRIPTION}
+      canonicalPath="/"
+      keywords={BRAND_KEYWORDS}
+      jsonLd={[buildOrganizationLd(), buildWebsiteLd()]}
+    />
     <Hero />
     <ClientLogos />
     <Suspense fallback={<div className="min-h-[200px]" />}>

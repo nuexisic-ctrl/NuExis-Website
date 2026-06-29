@@ -2,10 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Seo from './Seo';
 
 const NotFoundPage: React.FC = () => {
     return (
         <section className="min-h-screen flex items-center justify-center pt-24 pb-12 px-4">
+            <Seo
+                title="Page Not Found (404)"
+                description="The page you are looking for could not be found. Browse the NuExis product catalog, gallery, or contact support."
+                canonicalPath="/404"
+                noindex
+            />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

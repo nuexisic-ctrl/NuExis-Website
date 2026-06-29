@@ -30,11 +30,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single();
+    if (error) {
+      console.error('Failed to load profile:', error.message);
+      return;
+    }
     if (data) setProfile(data as Profile);
   };
 

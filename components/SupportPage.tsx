@@ -1,7 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare, Headphones, FileQuestion } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Seo from './Seo';
+import { buildBreadcrumbLd, ORG_CONTACT, SITE_URL, DEFAULT_OG_IMAGE } from '../lib/seo';
+
+// ---------------------------------------------------------------------------
+// Leaflet map – loads from CDN, no API key, minimal attribution
+// ---------------------------------------------------------------------------
+const OFFICE_LAT = 28.6762;
+const OFFICE_LNG = 77.0539;
+
+const LeafletMap: React.FC = () => {
+    const mapContainerRef = useRef<HTMLDivElement>(null);
+    const mapInstanceRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (mapInstanceRef.current) return; // already initialised
+
+        // Inject Leaflet CSS
+        if (!document.getElementById('leaflet-css')) {
+            const link = document.createElement('link');
+            link.id = 'leaflet-css';
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+            document.head.appendChild(link);
+        }
+
+        // Inject Leaflet JS then boot the map
+        const initMap = () => {
+            if (!mapContainerRef.current) return;
+            const L = (window as any).L;
+
+            const map = L.map(mapContainerRef.current, {
+                zoomControl: true,
+                scrollWheelZoom: false,
+            }).setView([OFFICE_LAT, OFFICE_LNG], 16);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+            }).addTo(map);
+
+            const icon = L.divIcon({
+                html: `<div style="
+                    width:36px;height:36px;
+                    background:linear-gradient(135deg,#1d4ed8,#6366f1);
+                    border-radius:50% 50% 50% 0;
+                    transform:rotate(-45deg);
+                    border:3px solid #fff;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.25)
+                "></div>`,
+                className: '',
+                iconSize: [36, 36],
+                iconAnchor: [18, 36],
+                popupAnchor: [0, -40],
+            });
+
+            L.marker([OFFICE_LAT, OFFICE_LNG], { icon })
+                .addTo(map)
+                .bindPopup(
+                    '<div style="font-family:sans-serif;line-height:1.5">'
+                    + '<b style="font-size:14px">NuExis</b><br>'
+                    + 'H-62, Kunwar Singh Nagar,<br>'
+                    + 'Nangloi, Delhi – 110041'
+                    + '</div>'
+                )
+                .openPopup();
+
+            mapInstanceRef.current = map;
+        };
+
+        if ((window as any).L) {
+            initMap();
+        } else {
+            const script = document.createElement('script');
+            script.id = 'leaflet-js';
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = initMap;
+            document.head.appendChild(script);
+        }
+
+        return () => {
+            mapInstanceRef.current?.remove();
+            mapInstanceRef.current = null;
+        };
+    }, []);
+
+    return <div ref={mapContainerRef} style={{ height: '280px', width: '100%' }} />;
+};
+
+// ---------------------------------------------------------------------------
 
 const SupportPage: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -43,7 +133,7 @@ const SupportPage: React.FC = () => {
             title: "Sales Inquiry",
             description: "Discuss your AV requirements and get custom quotes.",
             availability: "Mon-Fri, 9AM-6PM",
-            email: "sales@Nuexisinc@gmail.com",
+            email: "sales@nuexis.com",
             phone: "9625800589"
         },
         {
@@ -58,6 +148,38 @@ const SupportPage: React.FC = () => {
 
     return (
         <div className="min-h-screen pt-32 pb-20">
+            <Seo
+                title="Support & Contact — Get Help from NuExis"
+                description="Contact NuExis for sales, technical support, and product enquiries. Call +91-9625800589 or email support@nuexis.com. Based in Delhi, serving enterprises across India."
+                canonicalPath="/support"
+                keywords="NuExis support, NuExis contact, AV technical support, NuExis Delhi, contact NuExis, NuExis helpdesk"
+                jsonLd={[
+                    buildBreadcrumbLd([
+                        { name: 'Home', path: '/' },
+                        { name: 'Support', path: '/support' },
+                    ]),
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'ContactPage',
+                        name: 'NuExis Support & Contact',
+                        url: `${SITE_URL}/support`,
+                        mainEntity: {
+                            '@type': 'Organization',
+                            name: 'NuExis',
+                            email: ORG_CONTACT.email,
+                            telephone: ORG_CONTACT.telephone,
+                            image: DEFAULT_OG_IMAGE,
+                            address: {
+                                '@type': 'PostalAddress',
+                                streetAddress: ORG_CONTACT.streetAddress,
+                                addressLocality: ORG_CONTACT.addressLocality,
+                                postalCode: ORG_CONTACT.postalCode,
+                                addressCountry: ORG_CONTACT.addressCountry,
+                            },
+                        },
+                    },
+                ]}
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <motion.div
@@ -272,14 +394,22 @@ const SupportPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Map Placeholder */}
-                        <div className="bg-white rounded-3xl border border-black/10 overflow-hidden h-64">
-                            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                                <div className="text-center">
-                                    <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                                    <p className="text-gray-500 text-sm">Interactive Map</p>
-                                    <p className="text-gray-400 text-xs">Coming Soon</p>
+                        {/* Leaflet Map – interactive, no API key, minimal attribution */}
+                        <div className="bg-white rounded-3xl border border-black/10 overflow-hidden">
+                            <LeafletMap />
+                            <div className="px-4 py-3 flex items-center justify-between border-t border-black/5">
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                    <MapPin className="w-4 h-4 text-brand-blue flex-shrink-0" />
+                                    <span>H-62, Kunwar Singh Nagar, Nangloi, Delhi – 110041</span>
                                 </div>
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=H-62+Kunwar+Singh+Nagar+Nangloi+Delhi+110041"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs font-semibold text-brand-blue hover:text-blue-700 transition-colors whitespace-nowrap ml-3 flex items-center gap-1"
+                                >
+                                    Get Directions →
+                                </a>
                             </div>
                         </div>
                     </motion.div>

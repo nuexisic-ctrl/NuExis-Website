@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onSignupClick }) => {
       gridCols: softwares.length <= 2 ? softwares.length : Math.min(4, softwares.length),
       items: softwares.map(soft => ({
         label: soft.name,
-        href: soft.forward_url,
+        href: soft.name.toLowerCase() === 'nuexis signage' ? 'https://nuexis-signage-openclaude.vercel.app/' : soft.forward_url,
         image: resolveImageUrl(soft.image_url),
         imageFit: soft.image_fit,
       })),

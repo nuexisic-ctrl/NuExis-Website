@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useCatalog } from '../context/CatalogContext';
 import { Package, Layers, Search, ArrowRight } from 'lucide-react';
+import Seo from './Seo';
+import { buildBreadcrumbLd, buildItemListLd } from '../lib/seo';
 
 const CategoryListPage: React.FC = () => {
   const { categories, products, loading, resolveImageUrl } = useCatalog();
@@ -15,6 +17,22 @@ const CategoryListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 sm:pt-28 pb-16 sm:pb-20">
+      <Seo
+        title="Product Catalog — All AV & Display Categories"
+        description="Browse the complete NuExis product catalog: digital signage, interactive touch displays, active LED video walls, digital podiums, pro audio systems, video conferencing, and more."
+        canonicalPath="/categories"
+        keywords="NuExis products, AV product catalog, digital signage, touch display, active LED, digital podium, pro audio, video conferencing, NuExis catalog"
+        jsonLd={[
+          buildBreadcrumbLd([
+            { name: 'Home', path: '/' },
+            { name: 'Categories', path: '/categories' },
+          ]),
+          buildItemListLd(
+            categories.map(c => ({ name: c.name, path: `/category/${c.slug}` })),
+            'NuExis Product Categories'
+          ),
+        ]}
+      />
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12 text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>

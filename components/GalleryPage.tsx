@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, ZoomIn, Grid } from 'lucide-react';
 import { useCatalog } from '../context/CatalogContext';
+import Seo from './Seo';
+import { buildBreadcrumbLd } from '../lib/seo';
 
 interface GalleryImage {
     id: string; // Changed to string to support DB uuids
@@ -56,6 +58,16 @@ const GalleryPage: React.FC = () => {
 
     return (
         <div className="min-h-screen pt-32 pb-20">
+            <Seo
+                title="Project Gallery — AV Installations & Deployments"
+                description="View NuExis real-world installations: digital signage, active LED video walls, audio systems, touch kiosks, conference rooms, and immersive simulation projects across India."
+                canonicalPath="/gallery"
+                keywords="NuExis gallery, AV installations, digital signage projects, LED video wall installation, NuExis projects, case studies"
+                jsonLd={buildBreadcrumbLd([
+                    { name: 'Home', path: '/' },
+                    { name: 'Gallery', path: '/gallery' },
+                ])}
+            />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <motion.div

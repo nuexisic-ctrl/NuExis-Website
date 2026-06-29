@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useCatalog } from '../context/CatalogContext';
 import { useAuth } from '../context/AuthContext';
+import Seo from './Seo';
+import { buildBreadcrumbLd, abs } from '../lib/seo';
 import { 
   Search, 
   Map, 
@@ -32,16 +34,14 @@ interface SitemapSection {
 const SitemapPage: React.FC = () => {
   const { categories, products, softwares, galleryCategories } = useCatalog();
   const { isAdmin } = useAuth();
-  const [search, setSearch] = useState('');
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('q') || '');
 
-  // SEO setup
+  // Sync search box when arriving via the sitelinks search box (?q=...)
   useEffect(() => {
-    document.title = 'Sitemap - NuExis | Professional AV & Digital Signage Solutions';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', 'Explore our comprehensive NuExis HTML sitemap to easily find and navigate our AV solutions, digital signage, software systems, and support pages.');
-    }
-  }, []);
+    const q = searchParams.get('q');
+    if (q) setSearch(q);
+  }, [searchParams]);
 
   // 1. Static/Site Core Pages
   const coreLinks: SitemapLink[] = [
@@ -130,6 +130,30 @@ const SitemapPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 sm:pt-28 pb-16 sm:pb-20 transition-colors duration-300">
+      <Seo
+        title="Sitemap — Find Every Page, Product & Solution"
+        description="Explore the complete NuExis sitemap: browse all product categories, individual products, software solutions, gallery sections, and support pages in one place."
+        canonicalPath="/sitemap"
+        keywords="NuExis sitemap, NuExis pages, NuExis products list, site navigation, NuExis directory"
+        jsonLd={[
+          buildBreadcrumbLd([
+            { name: 'Home', path: '/' },
+            { name: 'Sitemap', path: '/sitemap' },
+          ]),
+          {
+            '@context': 'https://schema.org',
+            '@type': 'SiteNavigationElement',
+            name: ['Home', 'Product Catalog', 'Gallery', 'Support', 'Sitemap'],
+            url: [
+              abs('/'),
+              abs('/categories'),
+              abs('/gallery'),
+              abs('/support'),
+              abs('/sitemap'),
+            ],
+          },
+        ]}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Block */}
